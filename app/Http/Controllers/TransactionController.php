@@ -57,7 +57,7 @@ class TransactionController extends Controller
                 }
             });
 
-            return redirect()->route('user.view.history')->with('success', 'Berhasil pesan makanan! Silahkan lakukan pembayaran!');
+            return redirect()->route('user.view.history.detail', ['transaction' => $invoice_id])->with('success', 'Berhasil pesan makanan! Silahkan lakukan pembayaran!');
         } catch (\Throwable $th) {
             return back()->with('error', 'Ada yang salah! Silahkan coba lagi!');
         }

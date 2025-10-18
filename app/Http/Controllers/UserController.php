@@ -2,14 +2,19 @@
 
 namespace App\Http\Controllers;
 
+use App\Enums\TransactionStatus;
 use App\Models\Food;
 use App\Models\Transaction;
 use App\Models\User;
+use DB;
 use Error;
 use Exception;
 use Illuminate\Http\Request;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\Rule;
+use Illuminate\Validation\Rules\File;
 use Throwable;
 
 class UserController extends Controller
@@ -53,7 +58,17 @@ class UserController extends Controller
      */
     public function index(Request $request)
     {
-        return view('users.dashboard.index', ['userName' => $request->user('user')->name]);
+        $transactions = Transaction::whereBelongsTo($request->user('user'))
+            ->selectRaw('invoice_id')
+            ->whereNotIn('status', [TransactionStatus::CANCELLED->value, TransactionStatus::DELIVERED->value])
+            ->groupBy('invoice_id')
+            ->get();
+
+        return view('users.dashboard.index', [
+            'userName' => $request->user('user')->name,
+            'hasActiveOrder' => collect($transactions)->isNotEmpty(),
+            'activeOrderCount' => collect($transactions)->count()
+        ]);
     }
 
     /**
@@ -101,6 +116,70 @@ class UserController extends Controller
             ->where('user_id', '=', $request->user('user')->id)
             ->get();
         return view('users.history.detail', compact('transactions'));
+    }
+
+    public function uploadPaymentProof(Request $request, Transaction $transaction)
+    {
+        $payload = $request->validate([
+            'payment_proof' => ['required', File::image()->max('5mb')]
+        ]);
+
+        $transactions = Transaction::where('invoice_id', '=', $transaction->invoice_id)
+            ->where('user_id', '=', $request->user('user')->id)
+            ->where('status', '=', TransactionStatus::PENDING_PAYMENT->value)
+            ->get();
+
+        $file = $payload['payment_proof'];
+        $fileName = $request->user('user')->id . '_' . Carbon::now()->timestamp . '.' . $file->extension();
+
+        try {
+            DB::transaction(function () use ($transactions, $file, $fileName) {
+                Storage::disk('local')->putFileAs('/payment_proof', $file, $fileName);
+                foreach ($transactions as $t) {
+                    $t->payment_proof = $fileName;
+                    $t->status = TransactionStatus::WAITING_CONFIRMATION->value;
+                    $t->save();
+                };
+            });
+            return redirect()->route('user.view.history.detail', ['transaction' => $transaction->invoice_id])->with('success', 'Berhasil unggah bukti pembayaran!');
+        } catch (Throwable $th) {
+            return back()->with('error', "Ada yang salah! Silahkan coba lagi!");
+        }
+    }
+
+    public function paymentProof(Request $request, Transaction $transaction)
+    {
+        $file = '/payment_proof/' . $transaction->payment_proof;
+
+        try {
+            if (Storage::disk('local')->exists($file)) {
+                $path = Storage::disk('local')->path($file);
+                return response()->file($path);
+            }
+            abort(404);
+        } catch (Throwable $th) {
+            abort(404);
+        }
+    }
+
+    public function cancelOrder(Request $request, Transaction $transaction)
+    {
+        $transactions = Transaction::where('invoice_id', '=', $transaction->invoice_id)
+            ->where('user_id', '=', $request->user('user')->id)
+            ->where('status', '=', TransactionStatus::PENDING_PAYMENT->value)
+            ->get();
+
+        try {
+            DB::transaction(function () use ($transactions) {
+                foreach ($transactions as $t) {
+                    $t->status = TransactionStatus::CANCELLED->value;
+                    $t->save();
+                };
+            });
+            return redirect()->route('user.view.history.detail', ['transaction' => $transaction->invoice_id])->with('success', 'Pesanan berhasil dibatalkan!');
+        } catch (Throwable $th) {
+            return back()->with('error', "Ada yang salah! Silahkan coba lagi!");
+        }
     }
 
     /**

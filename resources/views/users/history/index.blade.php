@@ -30,36 +30,14 @@
                             <div class="flex-1 mb-4 sm:mb-0">
                                 <div class="flex items-center gap-4 mb-2">
                                     <p class="font-semibold text-gray-800">ID Pesanan: #{{ $t['invoice_id'] }}</p>
-                                    @switch($t['status'])
-                                        @case(TransactionStatus::PENDING_PAYMENT->value)
-                                            <span
-                                                class="text-xs font-medium px-3 py-1 rounded-full bg-orange-100 text-orange-800">{{ $t['status'] }}</span>
-                                        @break
-
-                                        @case(TransactionStatus::WAITING_CONFIRMATION->value)
-                                            <span
-                                                class="text-xs font-medium px-3 py-1 rounded-full bg-yellow-100 text-yellow-800">{{ $t['status'] }}</span>
-                                        @break
-
-                                        @case(TransactionStatus::CONFIRMED->value)
-                                            <span
-                                                class="text-xs font-medium px-3 py-1 rounded-full bg-blue-100 text-blue-800">{{ $t['status'] }}</span>
-                                        @break
-
-                                        @case(TransactionStatus::DELIVERED->value)
-                                            <span
-                                                class="text-xs font-medium px-3 py-1 rounded-full bg-green-100 text-green-800">{{ $t['status'] }}</span>
-                                        @break
-
-                                        @default
-                                            <span
-                                                class="text-xs font-medium px-3 py-1 rounded-full bg-red-100 text-red-800">{{ $t['status'] }}</span>
-                                    @endswitch
+                                    @include('users.history.transaction-status', [
+                                        'status' => $t['status'],
+                                    ])
                                 </div>
                                 <p class="text-sm text-gray-500">{{ $t['created_at'] }}</p>
                                 <p class="text-md font-bold text-gray-900 mt-2">Rp {{ $t['total'] }}</p>
                             </div>
-                            <a href="{{ route('user.view.historyDetail', ['transaction' => $t->invoice_id]) }}"
+                            <a href="{{ route('user.view.history.detail', ['transaction' => $t->invoice_id]) }}"
                                 class="w-full sm:w-auto text-center font-bold text-brand-green py-2 px-4 rounded-[10px] hover:bg-green-100 transition-all duration-300">
                                 Lihat Detail
                             </a>

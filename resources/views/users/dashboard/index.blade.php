@@ -19,11 +19,20 @@
                     </div>
                     <h2 class="ml-4 text-xl font-semibold text-gray-800">Pesanan Aktif</h2>
                 </div>
-                <p class="text-gray-500 mt-4">Anda tidak memiliki pesanan aktif</p>
-                <a href="{{ route('user.view.order') }}"
-                    class="w-full mt-6 bg-brand-orange text-white font-bold py-3 px-4 rounded-[15px] hover:bg-orange-600 transition-all duration-300 cursor-pointer block text-center">
-                    Pesan Sekarang
-                </a>
+                @if ($hasActiveOrder)
+                    <p class="text-gray-500 mt-4">Anda memiliki {{ $activeOrderCount }} pesanan aktif</p>
+                    <a href="{{ route('user.view.order') }}"
+                        class="w-full mt-6 bg-brand-orange text-white font-bold py-3 px-4 rounded-[15px] hover:bg-orange-600 transition-all duration-300 cursor-pointer block text-center">
+                        Pesan Lagi
+                    </a>
+                @else
+                    <p class="text-gray-500 mt-4">Anda tidak memiliki pesanan aktif</p>
+                    <a href="{{ route('user.view.order') }}"
+                        class="w-full mt-6 bg-brand-orange text-white font-bold py-3 px-4 rounded-[15px] hover:bg-orange-600 transition-all duration-300 cursor-pointer block text-center">
+                        Pesan Sekarang
+                    </a>
+                @endif
+
             </div>
 
             <div class="bg-gray-50 p-6 rounded-[15px]">

@@ -34,7 +34,10 @@ Route::prefix('user')->group(function () {
         Route::post('order', [TransactionController::class, 'create'])->name('txn.create');
 
         Route::get('history', [UserController::class, 'history'])->name('user.view.history');
-        Route::get('history/{transaction:invoice_id}', [UserController::class, 'historyDetail'])->name('user.view.historyDetail')->whereAlphaNumeric('transaction');
+        Route::get('history/{transaction:invoice_id}', [UserController::class, 'historyDetail'])->whereAlphaNumeric('transaction')->name('user.view.history.detail');
+        Route::patch('history/{transaction:invoice_id}', [UserController::class, 'uploadPaymentProof'])->whereAlphaNumeric('transaction')->name('user.upload.payment.proof');
+        Route::get('history/{transaction:invoice_id}/payment-proof', [UserController::class, 'paymentProof'])->whereAlphaNumeric('transaction')->name('user.view.payment.proof');
+        Route::patch('history/{transaction:invoice_id}/cancel', [UserController::class, 'cancelOrder'])->whereAlphaNumeric('transaction')->name('user.cancel.order');
 
         Route::get('profile', [UserController::class, 'edit'])->name('user.view.profile');
         Route::put('profile', [UserController::class, 'update'])->name('user.update');
