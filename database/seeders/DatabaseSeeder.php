@@ -2,7 +2,9 @@
 
 namespace Database\Seeders;
 
+use App\Enums\TransactionStatus;
 use App\Models\Food;
+use App\Models\Transaction;
 use App\Models\User;
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
@@ -34,6 +36,14 @@ class DatabaseSeeder extends Seeder
                 'image' => $food['image'],
             ]);
         }
+
+        Transaction::factory()->count(5)->sequence(
+            ['status' => TransactionStatus::PENDING_PAYMENT],
+            ['status' => TransactionStatus::WAITING_CONFIRMATION],
+            ['status' => TransactionStatus::CONFIRMED],
+            ['status' => TransactionStatus::DELIVERED],
+            ['status' => TransactionStatus::CANCELLED],
+        )->create();
 
     }
 }

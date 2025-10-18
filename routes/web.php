@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\FoodController;
+use App\Http\Controllers\TransactionController;
 use App\Http\Controllers\UserController;
 use App\Models\Food;
 use Illuminate\Support\Facades\Route;
@@ -30,9 +31,10 @@ Route::prefix('user')->group(function () {
         Route::get('home', [UserController::class, 'index'])->name('user.view.home');
 
         Route::get('order', [UserController::class, 'order'])->name('user.view.order');
-        Route::post('order', [FoodController::class, 'create'])->name('food.create');
+        Route::post('order', [TransactionController::class, 'create'])->name('txn.create');
 
         Route::get('history', [UserController::class, 'history'])->name('user.view.history');
+        Route::get('history/{transaction:invoice_id}', [UserController::class, 'historyDetail'])->name('user.view.historyDetail')->whereAlphaNumeric('transaction');
 
         Route::get('profile', [UserController::class, 'edit'])->name('user.view.profile');
         Route::put('profile', [UserController::class, 'update'])->name('user.update');

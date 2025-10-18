@@ -20,7 +20,6 @@ class FoodController extends Controller
      */
     public function create(Request $request)
     {
-        dd($request->all());
 
     }
 

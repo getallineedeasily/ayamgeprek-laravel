@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Food;
+use App\Models\Transaction;
 use App\Models\User;
 use Error;
 use Exception;
@@ -83,9 +84,23 @@ class UserController extends Controller
         return view('users.order.index', compact('foods'));
     }
 
-    public function history(User $user)
+    public function history(Request $request)
     {
-        return view('users.history.index');
+        $transaction = Transaction::whereBelongsTo($request->user('user'))
+            ->selectRaw('invoice_id, sum(total) as total, max(created_at) as created_at, status')
+            ->groupBy(['invoice_id', 'user_id', 'address', 'status'])
+            ->orderByDesc('created_at')
+            ->paginate(perPage: 3);
+
+        return view('users.history.index', compact('transaction'));
+    }
+
+    public function historyDetail(Request $request, Transaction $transaction)
+    {
+        $transactions = Transaction::with(['food:id,name'])->where('invoice_id', '=', $transaction->invoice_id)
+            ->where('user_id', '=', $request->user('user')->id)
+            ->get();
+        return view('users.history.detail', compact('transactions'));
     }
 
     /**
