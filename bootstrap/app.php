@@ -3,7 +3,6 @@
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
-use Illuminate\Http\Request;
 
 return Application::configure(basePath: dirname(__DIR__))
     ->withRouting(
@@ -13,7 +12,12 @@ return Application::configure(basePath: dirname(__DIR__))
     )
     ->withMiddleware(function (Middleware $middleware): void {
         $middleware->redirectGuestsTo('/login');
-        $middleware->redirectUsersTo('/user/home');
+        $middleware->redirectUsersTo(function () {
+            if (Auth::guard('user')->check()) {
+                return '/user/home';
+            };
+            return '/admin/home';
+        });
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         //

@@ -3,7 +3,11 @@
 namespace App\Http\Controllers;
 
 use App\Models\Food;
+use DB;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Validation\Rules\File;
+use Str;
 
 class FoodController extends Controller
 {
@@ -12,7 +16,8 @@ class FoodController extends Controller
      */
     public function index()
     {
-        //
+        $foods = Food::orderByDesc('created_at')->paginate(perPage: 3);
+        return view('admin.food.index', compact('foods'));
     }
 
     /**
@@ -20,7 +25,7 @@ class FoodController extends Controller
      */
     public function create(Request $request)
     {
-
+        return view('admin.food.create');
     }
 
     /**
@@ -28,7 +33,29 @@ class FoodController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $payload = $request->validate([
+            'name' => ['required', 'ascii'],
+            'price' => ['required', 'numeric', 'min:1', 'integer'],
+            'image' => ['required', File::image()->max('2mb')]
+        ]);
+
+        $fileName = Str::replace(" ", '-', Str::lower($payload['name'])) . "." . $payload['image']->extension();
+
+        try {
+            DB::transaction(function () use ($payload, $fileName) {
+                Storage::disk('public')->putFileAs('/images', $payload['image'], $fileName);
+                Food::create([
+                    'name' => $payload['name'],
+                    'price' => $payload['price'],
+                    'image' => $fileName
+                ]);
+            });
+
+            return redirect()->route('admin.view.food')->with('success', 'Berhasil menambahkan menu!');
+        } catch (\Throwable $th) {
+            return back()->with('error', 'Ada yang salah! Silahkan coba lagi!');
+        }
+
     }
 
     /**
@@ -44,7 +71,7 @@ class FoodController extends Controller
      */
     public function edit(Food $food)
     {
-        //
+        return view('admin.food.edit', compact('food'));
     }
 
     /**
@@ -52,7 +79,44 @@ class FoodController extends Controller
      */
     public function update(Request $request, Food $food)
     {
-        //
+        if ($request->file('image')) {
+            $payload = $request->validate([
+                'name' => ['required', 'ascii'],
+                'price' => ['required', 'numeric', 'min:1', 'integer'],
+                'image' => ['required', File::image()->max('2mb')]
+            ]);
+
+            $fileName = Str::replace(" ", '-', Str::lower($payload['name'])) . "." . $payload['image']->extension();
+
+        } else {
+            $payload = $request->validate([
+                'name' => ['required', 'ascii'],
+                'price' => ['required', 'numeric', 'min:1', 'integer'],
+            ]);
+
+            $fileName = null;
+        }
+
+        try {
+            DB::transaction(function () use ($request, $food, $payload, $fileName) {
+                if ($request->file('image')) {
+                    $path = '/images/' . $food->image;
+                    if (Storage::disk('public')->exists($path)) {
+                        Storage::disk('public')->delete($path);
+                    }
+                    Storage::disk('public')->putFileAs('/images', $payload['image'], $fileName);
+                    $food->image = $fileName;
+                }
+
+                $food->name = $payload['name'];
+                $food->price = $payload['price'];
+                $food->save();
+            });
+            return redirect()->route('admin.view.food')->with('success', 'Berhasil ubah menu!');
+        } catch (\Throwable $th) {
+            dd($th);
+            return back()->with('error', 'Ada yang salah! Silahkan coba lagi!');
+        }
     }
 
     /**
@@ -60,6 +124,18 @@ class FoodController extends Controller
      */
     public function destroy(Food $food)
     {
-        //
+        try {
+            DB::transaction(function () use ($food) {
+                $path = '/images/' . $food->image;
+                if (Storage::disk('public')->exists($path)) {
+                    Storage::disk('public')->delete($path);
+                }
+                $food->delete();
+            });
+            return redirect()->route('admin.view.food')->with('success', 'Berhasil hapus menu!');
+        } catch (\Throwable $th) {
+            dd($th);
+            return back()->with('error', 'Ada yang salah! Silahkan coba lagi!');
+        }
     }
 }

@@ -121,7 +121,7 @@ class UserController extends Controller
     public function uploadPaymentProof(Request $request, Transaction $transaction)
     {
         $payload = $request->validate([
-            'payment_proof' => ['required', File::image()->max('5mb')]
+            'payment_proof' => ['required', File::image()->max('2mb')]
         ]);
 
         $transactions = Transaction::where('invoice_id', '=', $transaction->invoice_id)

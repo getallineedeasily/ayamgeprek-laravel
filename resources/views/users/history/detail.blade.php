@@ -73,7 +73,7 @@
                     <div class="space-y-3 text-gray-700">
                         <p><strong>Tanggal:</strong> {{ $transactions[0]->created_at }}</p>
                         <div><strong>Status:</strong>
-                            @include('users.history.transaction-status', [
+                            @include('transaction-status', [
                                 'status' => $transactions[0]['status'],
                             ])
                         </div>
@@ -110,7 +110,7 @@
             <div class="mt-8 border-t border-gray-300 pt-6">
                 @switch($transactions[0]->status)
                     @case(TransactionStatus::PENDING_PAYMENT->value)
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-28">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-10">
                             <div>
                                 <h3 class="text-lg font-bold text-gray-800">Konfirmasi Pembayaran</h3>
                                 <p class="text-sm text-gray-600 mt-1 mb-4">Unggah bukti transfer Anda di sini.</p>
@@ -119,8 +119,28 @@
                                     method="POST" enctype="multipart/form-data">
                                     @csrf
                                     @method('PATCH')
-                                    <input type="file" name="payment_proof" id="payment_proof"
-                                        class="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-[10px] file:border-0 file:text-sm file:font-semibold file:bg-orange-100 file:text-brand-orange hover:file:cursor-pointer cursor-pointer bg-white">
+                                    <div>
+                                        <div
+                                            class="mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-gray-300 border-dashed rounded-[10px]">
+                                            <div class="space-y-1 text-center">
+                                                <svg class="mx-auto" xmlns="http://www.w3.org/2000/svg" height="80px"
+                                                    viewBox="0 -960 960 960" width="80px" fill="#B7B7B7">
+                                                    <path
+                                                        d="M480-480ZM180-120q-24 0-42-18t-18-42v-600q0-24 18-42t42-18h365v60H180v600h600v-365h60v365q0 24-18 42t-42 18H180Zm60-162h480L576-474 449-307l-94-124-115 149Zm453-323v-87h-88v-60h88v-88h60v88h87v60h-87v87h-60Z" />
+                                                </svg>
+
+                                                <div class="flex text-sm text-gray-600 justify-center">
+                                                    <label for="payment_proof"
+                                                        class="relative cursor-pointer bg-white rounded-md font-medium text-brand-orange hover:text-orange-500 focus-within:outline-none focus-within:ring-2 focus-within:ring-offset-2 focus-within:ring-brand-orange">
+                                                        <span>Unggah bukti transfer</span>
+                                                    </label>
+                                                    <input id="payment_proof" name="payment_proof" type="file" class="sr-only">
+                                                </div>
+                                                <p class="text-xs text-gray-500 mb-4">PNG, JPG, JPEG hingga 2MB</p>
+                                                <p class="text-xs text-gray-800" id="payment-proof-output"></p>
+                                            </div>
+                                        </div>
+                                    </div>
                                     @error('payment_proof')
                                         <span class="block mt-1.5 text-sm text-red-500 font-semibold">{{ $message }}</span>
                                     @enderror
@@ -129,6 +149,8 @@
                                         Konfirmasi Pembayaran
                                     </button>
                                 </form>
+
+
                             </div>
 
                             <div>
@@ -161,4 +183,16 @@
             </div>
         </div>
     </section>
+    <script>
+        const input = document.getElementById('payment_proof');
+        const paymentProofOutput = document.getElementById('payment-proof-output');
+
+        input.addEventListener('change', function() {
+            if (input.files.length > 0) {
+                paymentProofOutput.textContent = input.files[0].name;
+            } else {
+                paymentProofOutput.textContent = '';
+            }
+        });
+    </script>
 @endsection

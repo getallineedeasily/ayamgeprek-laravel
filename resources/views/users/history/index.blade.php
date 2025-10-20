@@ -30,7 +30,7 @@
                             <div class="flex-1 mb-4 sm:mb-0">
                                 <div class="flex items-center gap-4 mb-2">
                                     <p class="font-semibold text-gray-800">ID Pesanan: #{{ $t['invoice_id'] }}</p>
-                                    @include('users.history.transaction-status', [
+                                    @include('transaction-status', [
                                         'status' => $t['status'],
                                     ])
                                 </div>

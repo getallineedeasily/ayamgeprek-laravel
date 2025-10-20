@@ -17,7 +17,11 @@ class TransactionController extends Controller
      */
     public function index()
     {
-        //
+        $transactions = Transaction::with(['user:id,name'])
+            ->selectRaw('invoice_id, user_id, sum(total) as total, max(created_at) as created_at, status')
+            ->groupBy(['invoice_id', 'user_id', 'status'])
+            ->paginate(perPage: 3);
+        return view('admin.transaction.index', compact('transactions'));
     }
 
     /**

@@ -3,6 +3,7 @@
 namespace Database\Seeders;
 
 use App\Enums\TransactionStatus;
+use App\Models\Admin;
 use App\Models\Food;
 use App\Models\Transaction;
 use App\Models\User;
@@ -19,15 +20,17 @@ class DatabaseSeeder extends Seeder
         // User::factory(10)->create();
         $foods = [
             ["name" => "Ayam Geprek Bakar", "price" => 25000, "image" => "menu1.jpeg"],
-            ["name" => "Ayam Geprek Kremes", "price" => 25000, "image" => "menu2.png"],
-            ["name" => "Ayam Geprek Super", "price" => 25000, "image" => "menu3.jpg"],
-            ["name" => "Ayam Geprek Krispi", "price" => 25000, "image" => "menu4.png"],
+            ["name" => "Ayam Geprek Kremes", "price" => 22000, "image" => "menu2.png"],
+            ["name" => "Ayam Geprek Super", "price" => 30000, "image" => "menu3.jpg"],
+            ["name" => "Ayam Geprek Krispi", "price" => 28000, "image" => "menu4.png"],
         ];
 
         User::factory()->create([
             'name' => 'John',
             'email' => 'john@example.com',
         ]);
+
+        User::factory(5)->create();
 
         foreach ($foods as $food) {
             Food::factory()->create([
@@ -38,12 +41,17 @@ class DatabaseSeeder extends Seeder
         }
 
         Transaction::factory()->count(5)->sequence(
-            ['status' => TransactionStatus::PENDING_PAYMENT],
+            ['status' => TransactionStatus::PENDING_PAYMENT, 'payment_proof' => null],
             ['status' => TransactionStatus::WAITING_CONFIRMATION],
             ['status' => TransactionStatus::CONFIRMED],
             ['status' => TransactionStatus::DELIVERED],
-            ['status' => TransactionStatus::CANCELLED],
+            ['status' => TransactionStatus::CANCELLED, 'payment_proof' => null],
         )->create();
+
+        Admin::factory()->create([
+            'name' => 'Alice',
+            'email' => 'alice@example.com',
+        ]);
 
     }
 }

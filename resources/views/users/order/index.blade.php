@@ -17,7 +17,7 @@
             <h1 class="text-3xl font-bold text-gray-800">Pesan Makanan</h1>
             <p class="text-gray-600 mt-2">Pilih dan pesan menu favorit Anda di bawah ini</p>
         </div>
-        <form method="POST" action="{{ route('txn.create') }}" class="bg-gray-50 p-8 rounded-[15px] mt-8">
+        <form method="POST" action="{{ route('user.create.txn') }}" class="bg-gray-50 p-8 rounded-[15px] mt-8">
             @csrf
             <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
                 @foreach ($foods as $index => $food)
