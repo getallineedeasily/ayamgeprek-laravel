@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Admin;
+use App\Models\Transaction;
 use App\Models\User;
 use Auth;
 use Illuminate\Http\Request;
@@ -48,13 +49,31 @@ class AdminController extends Controller
      */
     public function index(Request $request)
     {
-        return view('admin.dashboard.index', ['name' => $request->user('admin')->name]);
+        $transactions = Transaction::with(['user:id,name'])
+            ->selectRaw('invoice_id, user_id, sum(total) as total, max(created_at) as created_at, status')
+            ->groupBy(['invoice_id', 'user_id', 'status'])
+            ->orderByDesc('created_at')
+            ->paginate(perPage: 3);
+
+        return view('admin.dashboard.index', ['name' => $request->user('admin')->name, 'transactions' => $transactions]);
     }
 
-    public function customer()
+    public function customer(Request $request)
     {
-        $users = User::paginate(perPage: 3);
-        return view('admin.customer.index', compact('users'));
+
+        $payload = $request->validate([
+            'search' => ['nullable', 'ascii'],
+        ]);
+
+        $query = $payload ? '%' . $payload['search'] . '%' : '';
+
+        $search = $payload['search'] ?? '';
+
+        $users = User::filteredUser($query)
+            ->paginate(perPage: 3)
+            ->appends(['search' => $search]);
+
+        return view('admin.customer.index', ['users' => $users, 'search' => $search]);
     }
 
     public function resetCustomerPassword(User $user)

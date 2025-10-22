@@ -20,14 +20,27 @@
         </div>
 
         <div class="mt-8 bg-gray-50 p-6 rounded-[15px]">
-            <div class="flex">
-                <input type="text" placeholder="Cari nama atau email pelanggan..."
-                    class="w-full px-4 py-2 border border-gray-300 rounded-l-[10px] focus:outline-none focus:ring-2 focus:ring-brand-orange bg-white">
-                <button
-                    class="bg-brand-orange text-white font-bold py-2 px-6 rounded-r-[10px] hover:bg-orange-600 transition-all duration-300">
-                    Cari
-                </button>
-            </div>
+            <form action="{{ route('admin.view.customer') }}" method="get">
+                <div class="flex flex-col md:flex-row gap-4">
+                    <input type="text" placeholder="Cari nama atau email pelanggan"
+                        class="px-4 py-2 border border-gray-300 rounded-[10px] focus:outline-none focus:ring-2 focus:ring-brand-orange bg-white flex-1"
+                        name="search">
+                    <button
+                        class="bg-brand-orange shrink-0 text-white font-bold py-2 px-4 rounded-[10px] hover:bg-orange-600 cursor-pointer"
+                        type="submit">
+                        Cari
+                    </button>
+                </div>
+            </form>
+
+            @if ($search && $search !== null && $search !== '')
+                <div class="mt-6 space-y-2">
+                    <p class="text-gray-500 text-base">Menampilkan hasil pencarian <span
+                            class="font-bold">"{{ $search }}"</span></p>
+                    <a class="text-brand-green underline cursor-pointer font-semibold"
+                        href="{{ route('admin.view.customer') }}">Atur ulang</a>
+                </div>
+            @endif
 
             <div class="mt-6 bg-white rounded-[15px] overflow-hidden">
                 <div class="overflow-x-auto">
@@ -55,7 +68,8 @@
                                     <td class="py-4 px-6">{{ $user->phone }}</td>
                                     <td class="py-4 px-6">{{ $user->address }}</td>
                                     <td class="py-4 px-6 text-center">
-                                        <form action="{{ route('admin.reset.customer.password', ['user' => $user->id]) }}" method="POST">
+                                        <form action="{{ route('admin.reset.customer.password', ['user' => $user->id]) }}"
+                                            method="POST">
                                             @csrf
                                             @method('PATCH')
                                             <button type="submit"

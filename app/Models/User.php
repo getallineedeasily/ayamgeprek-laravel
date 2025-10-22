@@ -6,6 +6,8 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Database\Eloquent\Attributes\Scope;
+use Illuminate\Database\Eloquent\Builder;
 
 class User extends Authenticatable
 {
@@ -16,6 +18,16 @@ class User extends Authenticatable
     {
         return $this->hasMany(Transaction::class, 'user_id', 'id');
     }
+
+    #[Scope]
+    protected function filteredUser(Builder $query, string $search): void
+    {
+        $query->when($search, function (Builder $query) use ($search) {
+            $query->where('name', 'like', $search)
+                ->orWhere('email', 'like', $search);
+        }, );
+    }
+
 
     /**
      * The attributes that are mass assignable.

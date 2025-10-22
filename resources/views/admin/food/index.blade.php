@@ -29,13 +29,28 @@
         </div>
 
         <div class="mt-8 bg-gray-50 p-6 rounded-[15px]">
-            <div class="flex gap-4">
-                <input type="text" placeholder="Cari nama produk..."
-                    class="px-4 py-2 border border-gray-300 rounded-[10px] focus:outline-none focus:ring-2 focus:ring-brand-orange bg-white flex-1">
-                <button class="bg-brand-orange shrink-0 text-white font-bold py-2 px-4 rounded-[10px] hover:bg-orange-600">
-                    Cari
-                </button>
-            </div>
+
+            <form action="{{ route('admin.view.food') }}" method="get">
+                <div class="flex flex-col md:flex-row gap-4">
+                    <input type="text" placeholder="Cari nama produk"
+                        class="px-4 py-2 border border-gray-300 rounded-[10px] focus:outline-none focus:ring-2 focus:ring-brand-orange bg-white flex-1"
+                        name="search">
+                    <button
+                        class="bg-brand-orange shrink-0 text-white font-bold py-2 px-4 rounded-[10px] hover:bg-orange-600 cursor-pointer"
+                        type="submit">
+                        Cari
+                    </button>
+                </div>
+            </form>
+
+            @if ($search && $search !== null && $search !== '')
+                <div class="mt-6 space-y-2">
+                    <p class="text-gray-500 text-base">Menampilkan hasil pencarian <span
+                            class="font-bold">"{{ $search }}"</span></p>
+                    <a class="text-brand-green underline cursor-pointer font-semibold"
+                        href="{{ route('admin.view.food') }}">Atur ulang</a>
+                </div>
+            @endif
 
             <div class="mt-6 bg-gray-50 rounded-[15px] overflow-hidden">
                 <div class="overflow-x-auto">

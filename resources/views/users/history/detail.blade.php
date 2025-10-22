@@ -81,21 +81,26 @@
                 </div>
 
                 <div class="lg:col-span-2">
-                    <h2 class="text-xl font-bold text-gray-800 mb-4">Rincian Item</h2>
+                    <h2 class="text-xl font-bold text-gray-800 mb-4">Rincian Pesanan</h2>
                     <div class="space-y-4">
 
                         @foreach ($transactions as $transaction)
-                            <div class="flex justify-between items-center">
-                                <div>
-                                    <p class="font-semibold">{{ $transaction->food->name }}</p>
-                                    <p class="text-sm text-gray-500">Jumlah: {{ $transaction->quantity }}</p>
+                            <div class="flex items-center justify-between pb-4">
+                                <div class="flex items-center">
+                                    <img src="{{ '/storage/images/' . $transaction->food->image }}"
+                                        alt="{{ $transaction->food->name }}"
+                                        class="w-16 h-16 rounded-[10px] object-cover mr-4">
+                                    <div>
+                                        <p class="font-bold">{{ $transaction->food->name }}</p>
+                                        <p class="text-sm text-gray-500">{{ $transaction->quantity }} x</p>
+                                    </div>
                                 </div>
-                                <p class="font-semibold">Rp {{ $transaction->price }}</p>
+                                <p class="font-semibold text-gray-700">Rp {{ $transaction->price }} </p>
                             </div>
                         @endforeach
 
                     </div>
-                    <hr class="my-4">
+                    <hr class="my-4 border-t-2 border-t-gray-200">
                     <div class="space-y-2">
                         <div class="flex justify-between font-bold text-lg">
                             <p class="text-2xl font-bold text-brand-green pt-2">Total:</p>
@@ -131,7 +136,7 @@
 
                                                 <div class="flex text-sm text-gray-600 justify-center">
                                                     <label for="payment_proof"
-                                                        class="relative cursor-pointer bg-white rounded-md font-medium text-brand-orange hover:text-orange-500 focus-within:outline-none focus-within:ring-2 focus-within:ring-offset-2 focus-within:ring-brand-orange">
+                                                        class="relative cursor-pointer rounded-md font-medium text-brand-orange hover:text-orange-500 focus-within:outline-none focus-within:ring-2 focus-within:ring-offset-2 focus-within:ring-brand-orange">
                                                         <span>Unggah bukti transfer</span>
                                                     </label>
                                                     <input id="payment_proof" name="payment_proof" type="file" class="sr-only">
@@ -176,7 +181,7 @@
 
                     @default
                         <a href="{{ route('user.view.payment.proof', ['transaction' => $transactions[0]->invoice_id]) }}"
-                            class="inline-block w-full sm:w-auto text-center font-bold text-brand-green py-2 px-4 rounded-[10px] hover:bg-green-100 transition-all duration-300 underline">
+                            class="inline-block w-full sm:w-auto text-center font-bold text-brand-green py-2 px-4 rounded-[10px] hover:bg-green-100 transition-all duration-300 underline" target="_blank">
                             Lihat Bukti Pembayaran
                         </a>
                 @endswitch

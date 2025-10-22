@@ -4,6 +4,8 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Attributes\Scope;
+use Illuminate\Database\Eloquent\Builder;
 
 class Food extends Model
 {
@@ -11,6 +13,16 @@ class Food extends Model
     use HasFactory;
 
     protected $table = 'foods';
+
+    #[Scope]
+    protected function filteredFood(Builder $query, string $search): void
+    {
+        $query->when($search, function (Builder $query) use ($search) {
+            $query->where('name', 'like', $search);
+        }, function (Builder $query) {
+            $query->orderByDesc('created_at');
+        });
+    }
 
     /**
      * The attributes that are mass assignable.

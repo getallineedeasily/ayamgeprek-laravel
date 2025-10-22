@@ -14,10 +14,22 @@ class FoodController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        $foods = Food::orderByDesc('created_at')->paginate(perPage: 3);
-        return view('admin.food.index', compact('foods'));
+
+        $payload = $request->validate([
+            'search' => ['nullable', 'ascii'],
+        ]);
+
+        $query = $payload ? '%' . $payload['search'] . '%' : '';
+
+        $search = $payload['search'] ?? '';
+
+        $foods = Food::filteredFood($query)
+            ->paginate(perPage: 3)
+            ->appends(['search' => $search]);
+
+        return view('admin.food.index', ['foods' => $foods, 'search' => $search]);
     }
 
     /**
@@ -43,13 +55,14 @@ class FoodController extends Controller
 
         try {
             DB::transaction(function () use ($payload, $fileName) {
-                Storage::disk('public')->putFileAs('/images', $payload['image'], $fileName);
                 Food::create([
                     'name' => $payload['name'],
                     'price' => $payload['price'],
                     'image' => $fileName
                 ]);
             });
+
+            Storage::disk('public')->putFileAs('/images', $payload['image'], $fileName);
 
             return redirect()->route('admin.view.food')->with('success', 'Berhasil menambahkan menu!');
         } catch (\Throwable $th) {
@@ -98,20 +111,19 @@ class FoodController extends Controller
         }
 
         try {
-            DB::transaction(function () use ($request, $food, $payload, $fileName) {
-                if ($request->file('image')) {
-                    $path = '/images/' . $food->image;
-                    if (Storage::disk('public')->exists($path)) {
-                        Storage::disk('public')->delete($path);
-                    }
-                    Storage::disk('public')->putFileAs('/images', $payload['image'], $fileName);
-                    $food->image = $fileName;
-                }
+            if ($request->file('image')) {
+                $food->image = $fileName;
 
-                $food->name = $payload['name'];
-                $food->price = $payload['price'];
-                $food->save();
-            });
+                $path = '/images/' . $food->image;
+                if (Storage::disk('public')->exists($path)) {
+                    Storage::disk('public')->delete($path);
+                }
+                Storage::disk('public')->putFileAs('/images', $payload['image'], $fileName);
+            }
+
+            $food->name = $payload['name'];
+            $food->price = $payload['price'];
+            $food->save();
             return redirect()->route('admin.view.food')->with('success', 'Berhasil ubah menu!');
         } catch (\Throwable $th) {
             dd($th);
@@ -125,13 +137,11 @@ class FoodController extends Controller
     public function destroy(Food $food)
     {
         try {
-            DB::transaction(function () use ($food) {
-                $path = '/images/' . $food->image;
-                if (Storage::disk('public')->exists($path)) {
-                    Storage::disk('public')->delete($path);
-                }
-                $food->delete();
-            });
+            $path = '/images/' . $food->image;
+            if (Storage::disk('public')->exists($path)) {
+                Storage::disk('public')->delete($path);
+            }
+            $food->delete();
             return redirect()->route('admin.view.food')->with('success', 'Berhasil hapus menu!');
         } catch (\Throwable $th) {
             dd($th);

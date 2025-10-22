@@ -20,26 +20,64 @@
 
 
         <div class="mt-8 bg-gray-50 p-6 rounded-[15px]">
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-                <input type="text" placeholder="Cari ID Pesanan atau Nama..."
-                    class="w-full px-4 py-2 border border-gray-300 rounded-[10px] focus:outline-none focus:ring-2 focus:ring-brand-orange bg-white">
-                <select
-                    class="w-full px-4 py-2 border border-gray-300 rounded-[10px] focus:outline-none focus:ring-2 focus:ring-brand-orange bg-white">
-                    <option value="">Semua Status</option>
-                    <option value="pending">Pending</option>
-                    <option value="processing">Diproses</option>
-                    <option value="completed">Selesai</option>
-                    <option value="cancelled">Dibatalkan</option>
-                </select>
-                <input type="date"
-                    class="w-full px-4 py-2 border border-gray-300 rounded-[10px] focus:outline-none focus:ring-2 focus:ring-brand-orange text-gray-500  bg-white">
+            <form action="" method="get" class="space-y-6">
+                <input type="text" placeholder="Cari ID pesanan atau nama"
+                    class="px-4 py-2 border border-gray-300 rounded-[10px] focus:outline-none focus:ring-2 focus:ring-brand-orange bg-white w-full block"
+                    name="search">
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div class="space-y-2">
+                        <label for="status" class="text-gray-500 block">Status</label>
+                        <select
+                            class="w-full px-4 py-2 border border-gray-300 rounded-[10px] focus:outline-none focus:ring-2 focus:ring-brand-orange bg-white"
+                            name="status">
+                            <option value="" selected>Pilih status</option>
+                            @foreach ($statuses as $s)
+                                <option value="{{ $s->value }}">{{ $s->value }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                    <div class="space-y-2">
+                        <label for="start_date" class="text-gray-500 block">Tanggal Awal</label>
+                        <input type="date" name="start_date"
+                            class="w-full px-4 py-2 border border-gray-300 rounded-[10px] focus:outline-none focus:ring-2 focus:ring-brand-orange text-gray-500 bg-white block">
+                    </div>
+                    <div class="space-y-2">
+                        <label for="end_date" class="text-gray-500 block">Tanggal Akhir</label>
+                        <input type="date" name="end_date"
+                            class="w-full px-4 py-2 border border-gray-300 rounded-[10px] focus:outline-none focus:ring-2 focus:ring-brand-orange text-gray-500 bg-white block">
+                    </div>
+                </div>
                 <button
-                    class="w-full bg-brand-orange text-white font-bold py-2 px-4 rounded-[10px] hover:bg-orange-600 transition-all duration-300">
-                    Filter
+                    class="bg-brand-orange text-white font-bold py-2 px-4 rounded-[10px] hover:bg-orange-600 cursor-pointer block w-full">
+                    Cari
                 </button>
-            </div>
+            </form>
 
-            <div class="mt-6 bg-white rounded-[15px] overflow-hidden">
+            @if ($search || $status || $start_date || $end_date)
+                <div class="mt-8 space-y-2">
+                    @if ($start_date && $end_date)
+                        <p class="text-gray-500 text-base">Menampilkan transaksi dari <span
+                                class="font-bold">"{{ $start_date }}"</span> sampai <span
+                                class="font-bold">"{{ $end_date }}"</span> </p>
+                    @elseif ($start_date)
+                        <p class="text-gray-500 text-base">Menampilkan transaksi dari <span
+                                class="font-bold">"{{ $start_date }}"</span></p>
+                    @elseif ($end_date)
+                        <p class="text-gray-500 text-base">Menampilkan transaksi sampai <span
+                                class="font-bold">"{{ $end_date }}"</span></p>
+                    @elseif ($search)
+                        <p class="text-gray-500 text-base">Menampilkan hasil pencarian <span
+                                class="font-bold">"{{ $search }}"</span></p>
+                    @elseif ($status)
+                        <p class="text-gray-500 text-base">Menampilkan status transaksi <span
+                                class="font-bold">"{{ $status }}"</span></p>
+                    @endif
+                    <a class="text-brand-green underline cursor-pointer font-semibold"
+                        href="{{ route('admin.view.txn') }}">Atur ulang</a>
+                </div>
+            @endif
+
+            <div class="mt-8 bg-white rounded-[15px] overflow-hidden">
                 <div class="overflow-x-auto">
                     <table class="w-full text-left">
                         <thead class="bg-gray-200">
@@ -63,7 +101,8 @@
                                         @include('transaction-status', ['status' => $t->status])
                                     </td>
                                     <td class="py-4 px-6 text-center">
-                                        <a href="#" class="text-brand-orange hover:underline font-semibold">Detail</a>
+                                        <a href="{{ route('admin.edit.txn', ['transaction' => $t->invoice_id]) }}"
+                                            class="text-brand-orange hover:underline font-semibold">Detail</a>
                                     </td>
                                 </tr>
                             @endforeach

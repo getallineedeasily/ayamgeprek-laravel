@@ -59,43 +59,37 @@
 
         <div class="grid grid-cols-1 gap-6 mt-8">
 
-            <div class="lg:col-span-2 bg-white p-6 rounded-[15px]">
+            <div class="lg:col-span-2 bg-gray-50 p-6 rounded-[15px]">
                 <h3 class="font-bold text-xl text-gray-800">Transaksi Terbaru</h3>
-                <div class="mt-4 overflow-x-auto">
+                <div class="mt-4 overflow-x-auto rounded-[15px]">
                     <table class="w-full text-left">
-                        <thead>
-                            <tr class="border-b">
-                                <th class="py-2">ID Pesanan</th>
-                                <th class="py-2">Pelanggan</th>
-                                <th class="py-2">Total</th>
-                                <th class="py-2">Status</th>
+                        <thead class="bg-gray-200">
+                            <tr class="border-b-gray-200">
+                                <th class="py-3 px-6 font-semibold">ID Pesanan</th>
+                                <th class="py-3 px-6 font-semibold">Pelanggan</th>
+                                <th class="py-3 px-6 font-semibold">Tanggal</th>
+                                <th class="py-3 px-6 font-semibold">Total</th>
+                                <th class="py-3 px-6 font-semibold min-w-[200px]">Status</th>
+                                <th class="py-3 px-6 font-semibold text-center">Aksi</th>
                             </tr>
                         </thead>
-                        <tbody class="text-gray-600">
-                            <tr class="border-b">
-                                <td class="py-3">#INV-12345</td>
-                                <td class="py-3">Budi Santoso</td>
-                                <td class="py-3">Rp 75.000</td>
-                                <td class="py-3"><span
-                                        class="text-xs font-medium px-3 py-1 rounded-full bg-green-100 text-brand-green">Selesai</span>
-                                </td>
-                            </tr>
-                            <tr class="border-b">
-                                <td class="py-3">#INV-12344</td>
-                                <td class="py-3">Ani Suryani</td>
-                                <td class="py-3">Rp 120.000</td>
-                                <td class="py-3"><span
-                                        class="text-xs font-medium px-3 py-1 rounded-full bg-green-100 text-brand-green">Selesai</span>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td class="py-3">#INV-12343</td>
-                                <td class="py-3">Citra Lestari</td>
-                                <td class="py-3">Rp 55.000</td>
-                                <td class="py-3"><span
-                                        class="text-xs font-medium px-3 py-1 rounded-full bg-yellow-100 text-yellow-800">Pending</span>
-                                </td>
-                            </tr>
+                        <tbody class="text-gray-600 bg-white divide-gray-200">
+                            @foreach ($transactions as $t)
+                                <tr>
+                                    <td class="py-4 px-6 font-medium">#{{ $t->invoice_id }}</td>
+                                    <td class="py-4 px-6">{{ $t->user->name }}</td>
+                                    <td class="py-4 px-6">{{ $t->created_at }}</td>
+                                    <td class="py-4 px-6">Rp {{ $t->total }}</td>
+                                    <td class="py-4 px-6">
+                                        @include('transaction-status', ['status' => $t->status])
+                                    </td>
+                                    <td class="py-4 px-6 text-center">
+                                        <a href="{{ route('admin.edit.txn', ['transaction' => $t->invoice_id]) }}"
+                                            class="text-brand-orange hover:underline font-semibold">Detail</a>
+                                    </td>
+                                </tr>
+                            @endforeach
+
                         </tbody>
                     </table>
                 </div>

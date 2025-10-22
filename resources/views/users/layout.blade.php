@@ -32,7 +32,7 @@
 
 
         <aside id="sidebar"
-            class="sidebar bg-white text-gray-800 w-64 space-y-6 py-7 px-2 fixed inset-y-0 left-0 transform -translate-x-full md:translate-x-0 z-20 md:rounded-r-[15px] h-dvh">
+            class="sidebar bg-white text-gray-800 w-64 space-y-6 py-7 px-2 fixed inset-y-0 left-0 transform -translate-x-full md:translate-x-0 z-20 md:rounded-r-[15px] min-h-dvh h-full">
 
             <div class="px-4 text-center">
                 <a href="/" class="text-brand-orange text-2xl font-extrabold">Ayam Geprek Kang Awan</a>

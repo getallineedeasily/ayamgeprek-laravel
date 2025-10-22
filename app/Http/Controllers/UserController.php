@@ -112,7 +112,7 @@ class UserController extends Controller
 
     public function historyDetail(Request $request, Transaction $transaction)
     {
-        $transactions = Transaction::with(['food:id,name'])->where('invoice_id', '=', $transaction->invoice_id)
+        $transactions = Transaction::with(['food:id,name,image'])->where('invoice_id', '=', $transaction->invoice_id)
             ->where('user_id', '=', $request->user('user')->id)
             ->get();
         return view('users.history.detail', compact('transactions'));
