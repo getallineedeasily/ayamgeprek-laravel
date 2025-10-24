@@ -2,10 +2,12 @@
 
 namespace App\Models;
 
+use App\Enums\TransactionStatus;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Attributes\Scope;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Carbon;
 
 class Transaction extends Model
 {
@@ -25,12 +27,15 @@ class Transaction extends Model
     }
 
     #[Scope]
-    protected function filteredTransactions(Builder $query, ?string $search, ?string $status, ?string $start_date, ?string $end_date): void
+    protected function filteredTransactions(Builder $query, string $search = null, string $status = null, string $start_date = null, string $end_date = null): void
     {
         $query->with(['user:id,name'])
             ->selectRaw('invoice_id, user_id, sum(total) as total, max(created_at) as created_at, status')
             ->when($start_date && $end_date, function ($query) use ($start_date, $end_date) {
-                $query->whereBetween('created_at', [$start_date, $end_date]);
+                $query->whereBetween('created_at', [
+                    Carbon::parse($start_date)->startOfDay(),
+                    Carbon::parse($end_date)->endOfDay()
+                ]);
             })
             ->when($search, function ($query, $search) {
                 $query->whereHas('user', function ($q) use ($search) {
@@ -49,6 +54,69 @@ class Transaction extends Model
             })
             ->groupBy(['invoice_id', 'user_id', 'status'])
             ->orderByDesc('created_at');
+    }
+
+    #[Scope]
+    protected function totalRevenue(Builder $query, ?string $period = 'today', ?string $start_date = '', ?string $end_date = '')
+    {
+        match ($period) {
+            'today' => $query->whereDate('created_at', Carbon::today()),
+            'month' => $query->whereMonth('created_at', Carbon::now()->month)
+                ->whereYear('created_at', Carbon::now()->year),
+            'year' => $query->whereYear('created_at', Carbon::now()->year),
+            'custom' => $query->whereBetween('created_at', [
+                Carbon::parse($start_date)->startOfDay(),
+                Carbon::parse($end_date)->endOfDay()
+            ]),
+            default => $query->whereDate('created_at', Carbon::today()),
+        };
+
+        return $query->where('status', TransactionStatus::DELIVERED->value)->sum('total');
+    }
+
+    #[Scope]
+    protected function totalSales(Builder $query, ?string $period = 'today', ?string $start_date = '', ?string $end_date = '')
+    {
+        match ($period) {
+            'today' => $query->whereDate('created_at', Carbon::today()),
+            'month' => $query->whereMonth('created_at', Carbon::now()->month)
+                ->whereYear('created_at', Carbon::now()->year),
+            'year' => $query->whereYear('created_at', Carbon::now()->year),
+            'custom' => $query->whereBetween('created_at', [
+                Carbon::parse($start_date)->startOfDay(),
+                Carbon::parse($end_date)->endOfDay()
+            ]),
+            default => $query->whereDate('created_at', Carbon::today()),
+        };
+        
+        return $query->where('status', '=', TransactionStatus::DELIVERED->value)
+            ->distinct()
+            ->count('invoice_id');
+    }
+
+    #[Scope]
+    protected function mostSoldFood(Builder $query, ?string $period = 'today', ?string $start_date = '', ?string $end_date = '')
+    {
+        match ($period) {
+            'today' => $query->whereDate('created_at', Carbon::today()),
+            'month' => $query->whereMonth('created_at', Carbon::now()->month)
+                ->whereYear('created_at', Carbon::now()->year),
+            'year' => $query->whereYear('created_at', Carbon::now()->year),
+            'custom' => $query->whereBetween('created_at', [
+                Carbon::parse($start_date)->startOfDay(),
+                Carbon::parse($end_date)->endOfDay()
+            ]),
+            default => $query->whereDate('created_at', Carbon::today()),
+        };
+
+        $result = $query->select('food_id')
+            ->selectRaw('SUM(quantity) as total_quantity')
+            ->with('food:id,name')
+            ->groupBy('food_id')
+            ->orderByDesc('total_quantity')
+            ->first();
+
+        return $result->food->name ?? "-";
     }
 
     /**

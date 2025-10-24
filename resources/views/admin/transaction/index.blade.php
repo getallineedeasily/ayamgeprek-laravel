@@ -20,11 +20,11 @@
 
 
         <div class="mt-8 bg-gray-50 p-6 rounded-[15px]">
-            <form action="" method="get" class="space-y-6">
+            <form action="{{ route('admin.view.txn') }}" method="GET" class="space-y-5">
                 <input type="text" placeholder="Cari ID pesanan atau nama"
                     class="px-4 py-2 border border-gray-300 rounded-[10px] focus:outline-none focus:ring-2 focus:ring-brand-orange bg-white w-full block"
                     name="search">
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
                     <div class="space-y-2">
                         <label for="status" class="text-gray-500 block">Status</label>
                         <select
@@ -47,10 +47,12 @@
                             class="w-full px-4 py-2 border border-gray-300 rounded-[10px] focus:outline-none focus:ring-2 focus:ring-brand-orange text-gray-500 bg-white block">
                     </div>
                 </div>
-                <button
-                    class="bg-brand-orange text-white font-bold py-2 px-4 rounded-[10px] hover:bg-orange-600 cursor-pointer block w-full">
-                    Cari
-                </button>
+                <div class="flex justify-center">
+                    <button
+                        class="bg-brand-orange text-white font-bold py-2 px-4 rounded-[10px] hover:bg-orange-600 cursor-pointer block w-full md:w-1/2">
+                        Cari
+                    </button>
+                </div>
             </form>
 
             @if ($search || $status || $start_date || $end_date)
@@ -77,7 +79,7 @@
                 </div>
             @endif
 
-            <div class="mt-8 bg-white rounded-[15px] overflow-hidden">
+            <div class="mt-10 bg-white rounded-[15px] overflow-hidden">
                 <div class="overflow-x-auto">
                     <table class="w-full text-left">
                         <thead class="bg-gray-200">

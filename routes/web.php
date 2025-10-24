@@ -53,6 +53,7 @@ Route::prefix('admin')->group(function () {
         Route::patch('customer/{user}', [AdminController::class, 'resetCustomerPassword'])->name('admin.reset.customer.password');
 
         Route::get('report', [AdminController::class, 'report'])->name('admin.view.report');
+        Route::get('report/print', [AdminController::class, 'print'])->name('admin.print.report');
 
         Route::post('logout', [AdminController::class, 'logout'])->name('admin.logout');
     });

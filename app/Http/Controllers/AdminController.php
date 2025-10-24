@@ -2,11 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use App\Enums\TransactionStatus;
 use App\Models\Admin;
 use App\Models\Transaction;
 use App\Models\User;
 use Auth;
 use Illuminate\Http\Request;
+use Illuminate\Support\Carbon;
 
 class AdminController extends Controller
 {
@@ -49,13 +51,41 @@ class AdminController extends Controller
      */
     public function index(Request $request)
     {
-        $transactions = Transaction::with(['user:id,name'])
-            ->selectRaw('invoice_id, user_id, sum(total) as total, max(created_at) as created_at, status')
-            ->groupBy(['invoice_id', 'user_id', 'status'])
-            ->orderByDesc('created_at')
-            ->paginate(perPage: 3);
+        $payload = $request->validate([
+            'filter' => ['nullable', 'in:today,month'],
+        ]);
 
-        return view('admin.dashboard.index', ['name' => $request->user('admin')->name, 'transactions' => $transactions]);
+        $filter = $payload['filter'] ?? '';
+
+        switch ($filter) {
+            case 'month':
+                $transactions = Transaction::filteredTransactions()
+                    ->paginate(perPage: 3);
+                $totalRevenue = Transaction::totalRevenue('month');
+                $totalSales = Transaction::totalSales('month');
+                $mostSoldFood = Transaction::mostSoldFood('month');
+                $totalCustomer = User::totalCustomer('month');
+                break;
+
+            default:
+                $transactions = Transaction::filteredTransactions()
+                    ->paginate(perPage: 3);
+                $totalRevenue = Transaction::totalRevenue('today');
+                $totalSales = Transaction::totalSales('today');
+                $mostSoldFood = Transaction::mostSoldFood('today');
+                $totalCustomer = User::totalCustomer('today');
+                break;
+        }
+
+        return view('admin.dashboard.index', [
+            'name' => $request->user('admin')->name,
+            'transactions' => $transactions,
+            'totalSales' => $totalSales,
+            'totalRevenue' => $totalRevenue,
+            'mostSoldFood' => $mostSoldFood,
+            'totalCustomer' => $totalCustomer,
+            'filter' => $filter
+        ]);
     }
 
     public function customer(Request $request)
@@ -87,12 +117,39 @@ class AdminController extends Controller
         }
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Request $request)
+    public function print(Request $request)
     {
-        //
+        $payload = $request->validate([
+            'start_date' => ['required', 'date'],
+            'end_date' => ['required', 'date'],
+        ]);
+
+        $start_date = $payload['start_date'];
+        $end_date = $payload['end_date'];
+
+        $transactions = Transaction::filteredTransactions(start_date: $start_date, end_date: $end_date)
+            ->where('status', '=', TransactionStatus::DELIVERED->value)->get();
+
+        $totalRevenue = Transaction::totalRevenue('custom', $start_date, $end_date);
+        $totalSales = Transaction::totalSales('custom', $start_date, $end_date);
+        $mostSoldFood = Transaction::mostSoldFood('custom', $start_date, $end_date);
+        $totalCustomer = User::totalCustomer('custom', $start_date, $end_date);
+
+        $statuses = TransactionStatus::cases();
+
+        $now = Carbon::now()->toDateString();
+
+        return view('admin.report.print', [
+            'start_date' => $start_date,
+            'end_date' => $end_date,
+            'statuses' => $statuses,
+            'transactions' => $transactions,
+            'totalSales' => $totalSales,
+            'totalRevenue' => $totalRevenue,
+            'mostSoldFood' => $mostSoldFood,
+            'totalCustomer' => $totalCustomer,
+            'now' => $now
+        ]);
     }
 
     /**
