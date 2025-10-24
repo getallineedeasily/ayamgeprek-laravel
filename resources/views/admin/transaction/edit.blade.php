@@ -27,7 +27,7 @@
                 <h1 class="text-3xl font-bold text-gray-800">Detail Transaksi</h1>
             </div>
             <p class="text-gray-600 mt-2">ID Transaksi: <span
-                    class="font-semibold text-brand-orange">#{{ $transactions[0]->invoice_id }}</span>
+                    class="font-semibold text-gray-600">#{{ $transactions[0]->invoice_id }}</span>
             </p>
         </div>
 
@@ -88,7 +88,8 @@
 
                             <div class="">
                                 <a href="{{ route('admin.view.payment.proof', ['transaction' => $transactions[0]->invoice_id]) }}"
-                                    class="text-brand-green underline font-medium cursor-pointer" target="_blank">Lihat bukti pembayaran</a>
+                                    class="text-brand-green underline font-medium cursor-pointer" target="_blank">Lihat
+                                    bukti pembayaran</a>
                             </div>
 
                         </div>
@@ -126,6 +127,10 @@
                                     <div class="border-t-2 border-t-gray-200 pt-6">
                                         <button type="submit" onclick="return confirm('Yakin mau ubah status transaksi?')"
                                             class="w-full bg-brand-green text-white font-bold py-3 px-6 rounded-[10px] hover:bg-green-700 transition-all duration-300 flex items-center justify-center cursor-pointer">
+                                            Simpan
+                                        </button>
+                                        <button type="button" disabled
+                                            class="w-full bg-gray-300 font-bold py-3 px-6 rounded-[10px] transition-all duration-300 justify-center cursor-not-allowed hidden loading">
                                             Simpan
                                         </button>
                                     </div>

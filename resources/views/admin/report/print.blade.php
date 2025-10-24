@@ -5,7 +5,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-    <title>Ayam Geprek Kang Awan</title>
+    <title>Ayam Geprek 77</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
@@ -16,10 +16,6 @@
     @vite('resources/js/app.js')
     <style>
         @media print {
-            /* * {
-                color: black;
-            } */
-
             .no-print {
                 display: none;
             }
@@ -55,13 +51,16 @@
 <body class="bg-gray-100">
     <div class="max-w-4xl mx-auto py-6 px-4 md:px-0 no-print">
         <div class="flex justify-between items-center">
-            <a href="{{ route('admin.view.report') }}"
-                class="text-base text-gray-600 hover:text-brand-orange flex items-center">
+            <div class="flex gap-1">
                 <span class="material-symbols-outlined pr-2">
                     arrow_back
                 </span>
-                </svg>Kembali ke Menu Laporan </a>
-            <button onclick="window.print()"
+                <a href="{{ route('admin.view.report') }}" class="text-base hover:underline text-gray-600 flex items-center">
+                    Kembali ke Menu Laporan
+                </a>
+            </div>
+
+            <button type="button" onclick="window.print()"
                 class="bg-brand-orange text-white font-bold py-2 px-6 rounded-[10px] hover:bg-orange-600 transition-all duration-300 flex items-center cursor-pointer">
                 <span class="material-symbols-outlined pr-2">
                     print
@@ -75,7 +74,7 @@
             <div class="flex justify-between items-center">
                 <div>
                     <h1 class="text-3xl font-bold">Laporan Penjualan</h1>
-                    <p class="text-gray-600">Ayam Geprek Kang Awan</p>
+                    <p class="text-gray-600">Ayam Geprek 77</p>
                 </div>
                 <div class="text-right">
                     <p class="font-semibold text-gray-700">Periode:</p>
@@ -127,8 +126,7 @@
                                 <td class="p-3 text-sm font-medium">#{{ $t->invoice_id }}</td>
                                 <td class="p-3 text-sm">{{ $t->user->name }}</td>
                                 <td class="p-3 text-sm">Rp {{ $t->total }}</td>
-                                <td class="p-3 text-sm"><span
-                                        class="text-xs font-semibold px-2 py-0.5 rounded-full">
+                                <td class="p-3 text-sm"><span class="text-xs font-semibold px-2 py-0.5 rounded-full">
                                         {{ $t->status }}</span>
                                 </td>
                             </tr>

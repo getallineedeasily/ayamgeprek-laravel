@@ -26,7 +26,7 @@
                 </a>
                 <h1 class="text-3xl font-bold text-gray-800">Detail Transaksi</h1>
             </div>
-            <p class="text-gray-600 mt-2">ID Pesanan: {{ $transactions[0]->invoice_id }}</p>
+            <p class="text-gray-600 mt-2">ID Pesanan: #{{ $transactions[0]->invoice_id }}</p>
         </div>
 
         <div class="bg-gray-50 p-6 md:p-8 rounded-[15px] mt-8">
@@ -150,7 +150,11 @@
                                         <span class="block mt-1.5 text-sm text-red-500 font-semibold">{{ $message }}</span>
                                     @enderror
                                     <button type="submit"
-                                        class="w-full mt-6 bg-brand-green text-white font-bold py-2.5 px-4 rounded-[10px] hover:bg-green-700 transition-all duration-300 cursor-pointer">
+                                        class="w-full mt-6 bg-brand-green text-white font-bold py-2.5 px-4 rounded-[10px] hover:bg-green-700 transition-all duration-300 cursor-pointer block">
+                                        Konfirmasi Pembayaran
+                                    </button>
+                                    <button type="button" disabled
+                                        class="w-full mt-6 font-bold py-2.5 px-4 rounded-[10px] transition-all duration-300 cursor-not-allowed hidden loading bg-gray-300 text-black">
                                         Konfirmasi Pembayaran
                                     </button>
                                 </form>
@@ -171,6 +175,10 @@
                                         class="w-full bg-red-100 text-brand-red font-bold py-2.5 px-4 rounded-[10px] hover:bg-red-200 transition-all duration-300 cursor-pointer">
                                         Batalkan Pesanan
                                     </button>
+                                    <button type="button" disabled
+                                        class="w-full font-bold py-2.5 px-4 rounded-[10px] transition-all duration-300 cursor-not-allowed hidden loading bg-gray-300 text-black">
+                                        Batalkan Pesanan
+                                    </button>
                                 </form>
                             </div>
                         </div>
@@ -181,7 +189,8 @@
 
                     @default
                         <a href="{{ route('user.view.payment.proof', ['transaction' => $transactions[0]->invoice_id]) }}"
-                            class="inline-block w-full sm:w-auto text-center font-bold text-brand-green py-2 px-4 rounded-[10px] hover:bg-green-100 transition-all duration-300 underline" target="_blank">
+                            class="inline-block w-full sm:w-auto text-center font-bold text-brand-green py-2 px-4 rounded-[10px] hover:bg-green-100 transition-all duration-300 underline"
+                            target="_blank">
                             Lihat Bukti Pembayaran
                         </a>
                 @endswitch

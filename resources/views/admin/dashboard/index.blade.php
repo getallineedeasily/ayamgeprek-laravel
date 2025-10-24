@@ -18,7 +18,11 @@
                         </select>
                     </div>
                     <button type="submit"
-                        class="w-full md:w-auto mt-4 md:mt-0 bg-brand-orange text-white font-bold py-2.5 px-4 rounded-[10px] hover:bg-orange-600 cursor-pointer">
+                        class="w-full md:w-auto mt-4 md:mt-0 bg-brand-orange text-white font-bold py-2.5 px-4 rounded-[10px] hover:bg-orange-600 cursor-pointer block">
+                        Tampilkan
+                    </button>
+                    <button type="button" disabled
+                        class="w-full md:w-auto mt-4 md:mt-0 bg-gray-300 text-black font-bold py-2.5 px-4 rounded-[10px] cursor-not-allowed loading hidden">
                         Tampilkan
                     </button>
                 </form>

@@ -35,7 +35,7 @@
 
                                 <label for="{{ 'quantity-' . $food['id'] }}"
                                     class="block text-sm font-medium text-gray-700 mb-2">Jumlah</label>
-                                <input type="text" id="{{ 'quantity-' . $food['id'] }}"
+                                <input type="number" id="{{ 'quantity-' . $food['id'] }}"
                                     name="order[{{ $index }}][quantity]" placeholder="0"
                                     class="w-full text-center py-2 px-3 border border-gray-300 rounded-[10px] focus:outline-none focus:ring-2 focus:ring-brand-orange transition">
                                 @error("order.$index.quantity")
@@ -50,6 +50,11 @@
             <div class="flex justify-center">
                 <button type="submit"
                     class="w-full md:w-1/2 mt-4 bg-brand-orange text-white font-bold py-2.5 px-4 rounded-[10px] hover:bg-orange-600 transition-all duration-300 flex items-center cursor-pointer justify-center">
+                    Pesan
+                </button>
+
+                <button type="button" disabled
+                    class="loading w-full md:w-1/2 mt-4 bg-gray-300 text-black font-bold py-2.5 px-4 rounded-[10px] transition-all duration-300 cursor-not-allowed hidden">
                     Pesan
                 </button>
             </div>

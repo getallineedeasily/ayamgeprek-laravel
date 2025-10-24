@@ -15,7 +15,7 @@
             @endsession
 
             <div class="text-center mb-8">
-                <h1 class="text-3xl font-bold text-gray-800">Ayam Geprek Kang Awan</h1>
+                <h1 class="text-3xl font-bold text-gray-800">Ayam Geprek 77</h1>
                 <p class="text-gray-500 mt-2 italic">Tiada dua menggoyang lidah</p>
             </div>
 
@@ -43,7 +43,12 @@
                 </div>
 
                 <button type="submit" id="submitButton"
-                    class="w-full mt-6 bg-brand-orange text-white font-bold py-3 px-4 rounded-[15px] hover:bg-orange-600 transition-all duration-300 ease-in-out transform cursor-pointer">
+                    class="w-full mt-8 bg-brand-orange text-white font-bold py-3 px-4 rounded-[15px] hover:bg-orange-600 transition-all duration-300 ease-in-out transform cursor-pointer block">
+                    Masuk
+                </button>
+
+                <button type="button" disabled
+                    class="loading w-full mt-8 bg-gray-300 text-black font-bold py-3 px-4 rounded-[15px]  transition-all duration-300 ease-in-out transform cursor-not-allowed hidden">
                     Masuk
                 </button>
             </form>

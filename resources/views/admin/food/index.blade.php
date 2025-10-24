@@ -40,6 +40,11 @@
                         type="submit">
                         Cari
                     </button>
+                    <button
+                        class="bg-gray-300 shrink-0 font-bold py-2 px-4 rounded-[10px] cursor-not-allowed hidden loading"
+                        type="button" disabled>
+                        Cari
+                    </button>
                 </div>
             </form>
 
@@ -67,9 +72,9 @@
                             @foreach ($foods as $food)
                                 <tr>
                                     <td class="py-4 px-6">
-                                        <div class="flex items-center space-x-4">
+                                        <div class="w-32 h-32 space-x-4">
                                             <img src="{{ '/storage/images/' . $food->image }}" alt="{{ $food->name }}"
-                                                class="w-32 h-32 rounded-[10px] object-cover">
+                                                class="w-full h-full rounded-[10px] object-cover">
                                         </div>
                                     </td>
                                     <td class="py-4 px-6">
@@ -85,9 +90,11 @@
                                             @csrf
                                             @method('DELETE')
                                             <a href="{{ route('admin.edit.food', ['food' => $food->id]) }}"
-                                                class="text-blue-600 hover:underline font-semibold mr-4 cursor-pointer">Ubah</a>
+                                                class="text-blue-600 hover:underline font-semibold cursor-pointer block mb-2">Ubah</a>
                                             <button type="submit" onclick="return confirm('Yakin mau hapus menu?')"
-                                                class="text-brand-red hover:underline font-semibold cursor-pointer">Hapus</button>
+                                                class="text-brand-red hover:underline font-semibold cursor-pointer block w-full">Hapus</button>
+                                            <button type="button" disabled
+                                                class="text-black hover:underline font-semibold cursor-not-alllowed hidden loading w-full">Hapus</button>
                                         </form>
                                     </td>
                                 </tr>

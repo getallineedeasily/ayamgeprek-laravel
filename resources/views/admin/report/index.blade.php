@@ -43,43 +43,12 @@
                         class="bg-brand-orange text-white font-bold py-2 px-4 rounded-[10px] hover:bg-orange-600 cursor-pointer block w-full md:w-1/2">
                         Lihat
                     </button>
+                    <button type="button" disabled
+                        class="bg-gray-300 font-bold py-2 px-4 rounded-[10px] cursor-not-allowed hidden loading w-full md:w-1/2">
+                        Lihat
+                    </button>
                 </div>
             </form>
-
-            {{-- <div class="mt-10 bg-white rounded-[15px] overflow-hidden">
-                <div class="overflow-x-auto">
-                    <table class="w-full text-left">
-                        <thead class="bg-gray-200">
-                            <tr class="border-b-gray-200">
-                                <th class="py-3 px-6 font-semibold">ID Pesanan</th>
-                                <th class="py-3 px-6 font-semibold">Pelanggan</th>
-                                <th class="py-3 px-6 font-semibold">Tanggal</th>
-                                <th class="py-3 px-6 font-semibold">Total</th>
-                                <th class="py-3 px-6 font-semibold min-w-[200px]">Status</th>
-                                <th class="py-3 px-6 font-semibold text-center">Aksi</th>
-                            </tr>
-                        </thead>
-                        <tbody class="text-gray-600 divide-gray-200">
-                            @foreach ($transactions as $t)
-                                <tr>
-                                    <td class="py-4 px-6 font-medium">#{{ $t->invoice_id }}</td>
-                                    <td class="py-4 px-6">{{ $t->user->name }}</td>
-                                    <td class="py-4 px-6">{{ $t->created_at }}</td>
-                                    <td class="py-4 px-6">Rp {{ $t->total }}</td>
-                                    <td class="py-4 px-6">
-                                        @include('transaction-status', ['status' => $t->status])
-                                    </td>
-                                    <td class="py-4 px-6 text-center">
-                                        <a href="{{ route('admin.edit.txn', ['transaction' => $t->invoice_id]) }}"
-                                            class="text-brand-orange hover:underline font-semibold">Detail</a>
-                                    </td>
-                                </tr>
-                            @endforeach
-
-                        </tbody>
-                    </table>
-                </div>
-            </div> --}}
 
         </div>
     </section>

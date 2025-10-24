@@ -48,8 +48,12 @@
                     </div>
                 </div>
                 <div class="flex justify-center">
-                    <button
+                    <button type="submit"
                         class="bg-brand-orange text-white font-bold py-2 px-4 rounded-[10px] hover:bg-orange-600 cursor-pointer block w-full md:w-1/2">
+                        Cari
+                    </button>
+                    <button type="button" disabled
+                        class="bg-gray-300 font-bold py-2 px-4 rounded-[10px] cursor-not-allowed hidden loading w-full md:w-1/2">
                         Cari
                     </button>
                 </div>

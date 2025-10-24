@@ -87,7 +87,11 @@
 
                 <div class="mt-8 flex justify-center gap-4">
                     <button type="submit"
-                        class="bg-brand-orange text-white font-bold py-3 px-6 rounded-[15px] hover:bg-orange-600 transition-all duration-300 transform cursor-pointer w-full md:w-1/2">
+                        class="bg-brand-orange text-white font-bold py-3 px-6 rounded-[15px] hover:bg-orange-600 transition-all duration-300 transform cursor-pointer w-full md:w-1/2 block">
+                        Simpan
+                    </button>
+                    <button type="button" disabled
+                        class="font-bold py-3 px-6 rounded-[15px] transition-all duration-300 transform w-full md:w-1/2 cursor-not-allowed hidden loading bg-gray-300 text-black">
                         Simpan
                     </button>
                 </div>

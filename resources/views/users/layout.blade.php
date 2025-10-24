@@ -5,7 +5,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-    <title>Ayam Geprek Kang Awan</title>
+    <title>Ayam Geprek 77</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
@@ -19,9 +19,9 @@
 <body class="max-w-[1440px] mx-auto bg-brand-yellow">
     <main class="relative min-h-screen md:flex">
 
-        <div class="md:hidden flex gap-2 justify-between items-center p-4 bg-white rounded-b-[15px]">
-            <h1 class="text-xl font-bold text-brand-orange">Ayam Geprek Kang Awan</h1>
-            <button id="mobile-menu-button" class="text-gray-700 focus:outline-none">
+        <div class="md:hidden flex gap-2 justify-between items-center p-4 bg-gray-50 rounded-b-[15px]">
+            <h1 class="text-xl font-bold text-brand-orange">Ayam Geprek 77</h1>
+            <button type="button" id="mobile-menu-button" class="text-gray-700 focus:outline-none">
                 <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"
                     xmlns="http://www.w3.org/2000/svg">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16">
@@ -32,10 +32,10 @@
 
 
         <aside id="sidebar"
-            class="sidebar bg-white text-gray-800 w-64 space-y-6 py-7 px-2 fixed inset-y-0 left-0 transform -translate-x-full md:translate-x-0 z-20 md:rounded-r-[15px] min-h-dvh h-full">
+            class="sidebar bg-gray-50 text-gray-800 w-64 space-y-6 py-7 px-2 fixed inset-y-0 left-0 transform -translate-x-full md:translate-x-0 z-20 md:rounded-r-[15px] min-h-dvh h-full">
 
             <div class="px-4 text-center">
-                <a href="/" class="text-brand-orange text-2xl font-extrabold">Ayam Geprek Kang Awan</a>
+                <a href="/" class="text-brand-orange text-2xl font-extrabold">Ayam Geprek 77</a>
             </div>
 
             <nav>
@@ -79,6 +79,15 @@
                         </span>
                         Keluar
                     </button>
+                    <button type="button" disabled
+                        class="w-full py-2.5 px-4 rounded-[10px] transition duration-200 text-gray-700 hover:bg-gray-100 cursor-not-allowed font-semibold loading hidden">
+                        <div class="flex items-center">
+                            <span class="material-symbols-outlined pr-2">
+                                logout
+                            </span>
+                            <span>Keluar</span>
+                        </div>
+                    </button>
                 </form>
             </div>
         </aside>
@@ -88,6 +97,9 @@
         </section>
 
     </main>
+    <footer class="md:ml-64 flex justify-center pb-6 px-6 md:px-10">
+         <span class="bg-gray-50 p-3 rounded-xl w-full text-center text-sm font-medium">&copy; 2025 by ricky</span>
+    </footer>
     <script>
         const btn = document.getElementById('mobile-menu-button');
         const sidebar = document.getElementById('sidebar');

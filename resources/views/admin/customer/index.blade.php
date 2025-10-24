@@ -30,6 +30,11 @@
                         type="submit">
                         Cari
                     </button>
+                    <button
+                        class="bg-gray-300 shrink-0 font-bold py-2 px-4 rounded-[10px] cursor-not-allowed hidden loading"
+                        type="button" disabled>
+                        Cari
+                    </button>
                 </div>
             </form>
 
@@ -75,6 +80,10 @@
                                             <button type="submit"
                                                 onclick="return confirm('Yakin mau atur ulang kata sandi?')"
                                                 class="text-blue-600 hover:underline font-semibold  cursor-pointer">Atur
+                                                ulang kata
+                                                sandi</button>
+                                            <button type="button" disabled
+                                                class="text-gray-600 hover:underline font-semibold  cursor-not-allowed loading hidden">Atur
                                                 ulang kata
                                                 sandi</button>
                                         </form>
