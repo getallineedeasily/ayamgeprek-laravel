@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Enums\TransactionStatus;
-use App\Models\Admin;
 use App\Models\Transaction;
 use App\Models\User;
 use Auth;
@@ -151,31 +150,6 @@ class AdminController extends Controller
             'now' => $now
         ]);
     }
-
-    /**
-     * Display the specified resource.
-     */
-    public function show(Admin $admin)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(Admin $admin)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, Admin $admin)
-    {
-        //
-    }
-
 
     public function report()
     {

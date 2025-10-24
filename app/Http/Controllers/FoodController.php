@@ -16,7 +16,6 @@ class FoodController extends Controller
      */
     public function index(Request $request)
     {
-
         $payload = $request->validate([
             'search' => ['nullable', 'ascii'],
         ]);
@@ -35,7 +34,7 @@ class FoodController extends Controller
     /**
      * Show the form for creating a new resource.
      */
-    public function create(Request $request)
+    public function create()
     {
         return view('admin.food.create');
     }
@@ -69,14 +68,6 @@ class FoodController extends Controller
             return back()->with('error', 'Ada yang salah! Silahkan coba lagi!');
         }
 
-    }
-
-    /**
-     * Display the specified resource.
-     */
-    public function show(Food $food)
-    {
-        //
     }
 
     /**
@@ -144,7 +135,6 @@ class FoodController extends Controller
             $food->delete();
             return redirect()->route('admin.view.food')->with('success', 'Berhasil hapus menu!');
         } catch (\Throwable $th) {
-            dd($th);
             return back()->with('error', 'Ada yang salah! Silahkan coba lagi!');
         }
     }

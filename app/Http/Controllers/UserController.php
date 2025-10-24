@@ -7,11 +7,10 @@ use App\Models\Food;
 use App\Models\Transaction;
 use App\Models\User;
 use DB;
-use Error;
-use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\Rule;
 use Illuminate\Validation\Rules\File;
@@ -87,6 +86,8 @@ class UserController extends Controller
         try {
             $user = User::create($payload);
             Auth::guard('user')->login($user);
+            $request->session()->regenerate();
+            $request->session()->regenerateToken();
             return redirect()->route('user.view.home');
         } catch (Throwable $th) {
             return back()->with('error', "Ada yang salah! Silahkan coba lagi!");
@@ -112,6 +113,8 @@ class UserController extends Controller
 
     public function historyDetail(Request $request, Transaction $transaction)
     {
+        Gate::authorize('view', $transaction);
+
         $transactions = Transaction::with(['food:id,name,image'])->where('invoice_id', '=', $transaction->invoice_id)
             ->where('user_id', '=', $request->user('user')->id)
             ->get();
@@ -120,6 +123,8 @@ class UserController extends Controller
 
     public function uploadPaymentProof(Request $request, Transaction $transaction)
     {
+        Gate::authorize('update', $transaction);
+
         $payload = $request->validate([
             'payment_proof' => ['required', File::image()->max('2mb')]
         ]);
@@ -147,8 +152,10 @@ class UserController extends Controller
         }
     }
 
-    public function paymentProof(Request $request, Transaction $transaction)
+    public function paymentProof(Transaction $transaction)
     {
+        Gate::authorize('view', $transaction);
+
         $file = '/payment_proof/' . $transaction->payment_proof;
 
         try {
@@ -164,6 +171,8 @@ class UserController extends Controller
 
     public function cancelOrder(Request $request, Transaction $transaction)
     {
+        Gate::authorize('update', $transaction);
+
         $transactions = Transaction::where('invoice_id', '=', $transaction->invoice_id)
             ->where('user_id', '=', $request->user('user')->id)
             ->where('status', '=', TransactionStatus::PENDING_PAYMENT->value)
@@ -230,11 +239,4 @@ class UserController extends Controller
         }
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(User $user)
-    {
-        //
-    }
 }

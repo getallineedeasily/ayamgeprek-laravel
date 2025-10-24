@@ -103,7 +103,7 @@
                     <hr class="my-4 border-t-2 border-t-gray-200">
                     <div class="space-y-2">
                         <div class="flex justify-between font-bold text-lg">
-                            <p class="text-2xl font-bold text-brand-green pt-2">Total:</p>
+                            <p class="text-2xl font-bold text-brand-green pt-2">Total</p>
                             <p class="text-2xl font-bold text-brand-green pt-2">Rp
                                 {{ collect($transactions)->reduce(function ($prev, $curr) {return $prev + $curr->total;}, 0) }}
                             </p>
@@ -118,7 +118,7 @@
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-10">
                             <div>
                                 <h3 class="text-lg font-bold text-gray-800">Konfirmasi Pembayaran</h3>
-                                <p class="text-sm text-gray-600 mt-1 mb-4">Unggah bukti transfer Anda di sini.</p>
+                                <p class="text-sm text-gray-600 mt-1 mb-4">Unggah bukti transfer Anda.</p>
                                 <form
                                     action="{{ route('user.upload.payment.proof', ['transaction' => $transactions[0]->invoice_id]) }}"
                                     method="POST" enctype="multipart/form-data">
@@ -168,7 +168,7 @@
                                     @csrf
                                     @method('PATCH')
                                     <h3 class="text-lg font-bold text-gray-800">Batalkan Pesanan?</h3>
-                                    <p class="text-sm text-gray-600 mt-1 mb-4">Pesanan tidak dapat dikembalikan jika sudah
+                                    <p class="text-sm text-gray-600 mt-1 mb-4">Pesanan tidak dapat diproses jika sudah
                                         dibatalkan.
                                     </p>
                                     <button type="submit" onclick="return confirm('Yakin ingin membatalkan pesanan?')"

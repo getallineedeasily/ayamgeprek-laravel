@@ -24,28 +24,31 @@
 
         <div class="bg-gray-50 p-6 md:p-8 rounded-[15px] mt-8">
             <div class="space-y-6">
-                @foreach ($transaction as $t)
-                    <div class="bg-white border border-gray-200 rounded-[15px] p-4 transition">
-                        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center">
-                            <div class="flex-1 mb-4 sm:mb-0">
-                                <div class="flex items-center gap-4 mb-2">
-                                    <p class="font-semibold text-gray-800">ID Pesanan: #{{ $t['invoice_id'] }}</p>
-                                    @include('transaction-status', [
-                                        'status' => $t['status'],
-                                    ])
+                @if ($transaction->isNotEmpty())
+                    @foreach ($transaction as $t)
+                        <div class="bg-white border border-gray-200 rounded-[15px] p-4 transition">
+                            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center">
+                                <div class="flex-1 mb-4 sm:mb-0">
+                                    <div class="flex items-center gap-4 mb-2">
+                                        <p class="font-semibold text-gray-800">ID Pesanan: #{{ $t['invoice_id'] }}</p>
+                                        @include('transaction-status', [
+                                            'status' => $t['status'],
+                                        ])
+                                    </div>
+                                    <p class="text-sm text-gray-500">{{ $t['created_at'] }}</p>
+                                    <p class="text-md font-bold text-gray-900 mt-2">Rp {{ $t['total'] }}</p>
                                 </div>
-                                <p class="text-sm text-gray-500">{{ $t['created_at'] }}</p>
-                                <p class="text-md font-bold text-gray-900 mt-2">Rp {{ $t['total'] }}</p>
+                                <a href="{{ route('user.view.history.detail', ['transaction' => $t->invoice_id]) }}"
+                                    class="w-full sm:w-auto text-center font-bold text-brand-green py-2 px-4 rounded-[10px] hover:bg-green-100 transition-all duration-300">
+                                    Lihat Detail
+                                </a>
                             </div>
-                            <a href="{{ route('user.view.history.detail', ['transaction' => $t->invoice_id]) }}"
-                                class="w-full sm:w-auto text-center font-bold text-brand-green py-2 px-4 rounded-[10px] hover:bg-green-100 transition-all duration-300">
-                                Lihat Detail
-                            </a>
                         </div>
-                    </div>
-                @endforeach
-
-                {{ $transaction->links() }}
+                    @endforeach
+                    {{ $transaction->links() }}
+                @else
+                    <p class="text-center">Belum ada transaksi</p>
+                @endif
 
 
             </div>

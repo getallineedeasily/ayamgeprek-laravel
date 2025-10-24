@@ -8,6 +8,7 @@ use App\Models\Transaction;
 use DB;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
@@ -93,15 +94,6 @@ class TransactionController extends Controller
 
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Request $request)
-    {
-        //
-    }
-
-
     public function paymentProof(Transaction $transaction)
     {
         $path = '/payment_proof/' . $transaction->payment_proof;
@@ -135,6 +127,8 @@ class TransactionController extends Controller
      */
     public function update(Request $request, Transaction $transaction)
     {
+        Gate::authorize('adminUpdate', $transaction);
+
         $payload = $request->validate([
             'status' => ['required', Rule::enum(TransactionStatus::class)]
         ]);
@@ -142,32 +136,22 @@ class TransactionController extends Controller
         try {
             DB::transaction(function () use ($payload, $transaction) {
                 Transaction::where('invoice_id', '=', $transaction->invoice_id)->update(['status' => $payload['status']]);
+
+                if ($payload['status'] == TransactionStatus::PENDING_PAYMENT->value) {
+                    $path = '/payment_proof/' . $transaction->payment_proof;
+
+                    Transaction::where('invoice_id', '=', $transaction->invoice_id)->update(['payment_proof' => null]);
+
+                    if (Storage::disk('local')->exists($path)) {
+                        Storage::disk('local')->delete($path);
+                    }
+                }
             });
 
-            if ($payload['status'] == TransactionStatus::PENDING_PAYMENT->value) {
-                $path = '/payment_proof/' . $transaction->payment_proof;
-
-                DB::transaction(function () use ($transaction) {
-                    Transaction::where('invoice_id', '=', $transaction->invoice_id)->update(['payment_proof' => null]);
-                });
-
-                if (Storage::disk('local')->exists($path)) {
-                    Storage::disk('local')->delete($path);
-                }
-            }
             return redirect()->route('admin.edit.txn', ['transaction' => $transaction->invoice_id])->with('success', 'Berhasil ubah status transaksi!');
         } catch (\Throwable $th) {
             return back()->with('error', 'Ada yang salah! Silahkan coba lagi!');
         }
-
-
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(Transaction $transaction)
-    {
-        //
-    }
 }

@@ -5,7 +5,6 @@ use App\Http\Controllers\FoodController;
 use App\Http\Controllers\TransactionController;
 use App\Http\Controllers\UserController;
 use App\Models\Food;
-use App\Models\Transaction;
 use Illuminate\Support\Facades\Route;
 
 Route::middleware('guest:user,admin')->group(function () {
@@ -27,7 +26,7 @@ Route::middleware('guest:user,admin')->group(function () {
 
 
 Route::prefix('admin')->group(function () {
-    Route::middleware('guest:admin')->group(function () {
+    Route::middleware('guest:user,admin')->group(function () {
         Route::get('/login', function () {
             return view('auth.login-admin');
         })->name('view.admin.login');
@@ -38,19 +37,19 @@ Route::prefix('admin')->group(function () {
         Route::get('home', [AdminController::class, 'index'])->name('admin.view.home');
 
         Route::get('transaction', [TransactionController::class, 'index'])->name('admin.view.txn');
-        Route::get('transaction/{transaction:invoice_id}', [TransactionController::class, 'edit'])->name('admin.edit.txn');
-        Route::get('transaction/{transaction:invoice_id}/payment-proof', [TransactionController::class, 'paymentProof'])->name('admin.view.payment.proof');
-        Route::patch('transaction/{transaction:invoice_id}', [TransactionController::class, 'update'])->name('admin.update.txn');
+        Route::get('transaction/{transaction:invoice_id}', [TransactionController::class, 'edit'])->whereAlphaNumeric('transaction')->name('admin.edit.txn');
+        Route::get('transaction/{transaction:invoice_id}/payment-proof', [TransactionController::class, 'paymentProof'])->whereAlphaNumeric('transaction')->name('admin.view.payment.proof');
+        Route::patch('transaction/{transaction:invoice_id}', [TransactionController::class, 'update'])->whereAlphaNumeric('transaction')->name('admin.update.txn');
 
         Route::get('food', [FoodController::class, 'index'])->name('admin.view.food');
         Route::get('food/create', [FoodController::class, 'create'])->name('admin.create.food');
         Route::post('food/create', [FoodController::class, 'store'])->name('admin.store.food');
-        Route::get('food/{food}/edit', [FoodController::class, 'edit'])->name('admin.edit.food');
-        Route::patch('food/{food}/edit', [FoodController::class, 'update'])->name('admin.update.food');
-        Route::delete('food/{food}/delete', [FoodController::class, 'destroy'])->name('admin.destroy.food');
+        Route::get('food/{food}/edit', [FoodController::class, 'edit'])->whereNumber('food')->name('admin.edit.food');
+        Route::patch('food/{food}/edit', [FoodController::class, 'update'])->whereNumber('food')->name('admin.update.food');
+        Route::delete('food/{food}/delete', [FoodController::class, 'destroy'])->whereNumber('food')->name('admin.destroy.food');
 
         Route::get('customer', [AdminController::class, 'customer'])->name('admin.view.customer');
-        Route::patch('customer/{user}', [AdminController::class, 'resetCustomerPassword'])->name('admin.reset.customer.password');
+        Route::patch('customer/{user}', [AdminController::class, 'resetCustomerPassword'])->whereNumber('user')->name('admin.reset.customer.password');
 
         Route::get('report', [AdminController::class, 'report'])->name('admin.view.report');
         Route::get('report/print', [AdminController::class, 'print'])->name('admin.print.report');
