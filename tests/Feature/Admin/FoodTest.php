@@ -155,7 +155,7 @@ class FoodTest extends TestCase
             'image' => 'ayam-goreng.jpg'
         ]);
 
-        Storage::disk('public')->assertExists('images/ayam-goreng.jpg');
+        $this->assertFileExists(Storage::disk('public')->path('images/ayam-goreng.jpg'));
     }
 
     public function test_food_name_is_required()
@@ -304,7 +304,7 @@ class FoodTest extends TestCase
         $this->assertEquals('Makanan Baru', $this->food->name);
         $this->assertEquals(15000, $this->food->price);
         $this->assertEquals('makanan-lama.jpg', $this->food->image);
-        Storage::disk('public')->assertExists('images/makanan-lama.jpg');
+        $this->assertFileExists(Storage::disk('public')->path('images/makanan-lama.jpg'));
     }
 
     public function test_admin_can_update_food_with_a_new_image()
@@ -324,7 +324,7 @@ class FoodTest extends TestCase
         $this->food->refresh();
         $this->assertEquals('Makanan Super Baru', $this->food->name);
         $this->assertEquals('makanan-super-baru.png', $this->food->image);
-        Storage::disk('public')->assertExists('images/makanan-super-baru.png');
+        $this->assertFileExists(Storage::disk('public')->path('images/makanan-super-baru.png'));
     }
 
     public function test_admin_gets_validation_error_when_updating_with_no_name()
@@ -376,7 +376,7 @@ class FoodTest extends TestCase
     {
         $food = Food::factory()->create(['image' => 'gambar-tes.jpg']);
         Storage::disk('public')->put('images/gambar-tes.jpg', 'file-palsu');
-        Storage::disk('public')->assertExists('images/gambar-tes.jpg');
+        $this->assertFileExists(Storage::disk('public')->path('images/gambar-tes.jpg'));
 
         $response = $this->actingAs($this->admin, 'admin')
             ->delete(route('admin.destroy.food', $food));
@@ -384,13 +384,13 @@ class FoodTest extends TestCase
         $response->assertRedirect(route('admin.view.food'));
         $response->assertSessionHas('success');
         $this->assertDatabaseMissing('foods', ['id' => $food->id]);
-        Storage::disk('public')->assertMissing('images/gambar-tes.jpg');
+        $this->assertFileDoesNotExist(Storage::disk('public')->path('images/gambar-tes.jpg'));
     }
 
     public function test_admin_can_delete_food_even_if_image_is_missing_from_storage()
     {
         $food = Food::factory()->create(['image' => 'gambar-hilang.jpg']);
-        Storage::disk('public')->assertMissing('images/gambar-hilang.jpg');
+        $this->assertFileDoesNotExist(Storage::disk('public')->path('images/gambar-hilang.jpg'));
 
         $response = $this->actingAs($this->admin, 'admin')
             ->delete(route('admin.destroy.food', $food));

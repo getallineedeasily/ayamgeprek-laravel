@@ -314,7 +314,7 @@ class TransactionTest extends TestCase
             ]);
 
         $response->assertRedirect(route('admin.edit.txn', ['transaction' => $t1->invoice_id]));
-        Storage::disk('local')->assertMissing('/payment_proof/' . $fileName);
+        $this->assertFileDoesNotExist(Storage::disk('local')->path('/payment_proof/' . $fileName));
         $this->assertDatabaseHas('transactions', ['id' => $t1->id, 'payment_proof' => null]);
         $this->assertDatabaseHas('transactions', ['id' => $t2->id, 'payment_proof' => null]);
     }
