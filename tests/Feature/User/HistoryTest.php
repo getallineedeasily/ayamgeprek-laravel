@@ -2,6 +2,7 @@
 
 namespace Tests\Feature\User;
 
+use App\Enums\TransactionStatus;
 use App\Models\Food;
 use App\Models\Transaction;
 use App\Models\User;
@@ -40,9 +41,85 @@ class HistoryTest extends TestCase
 
         $response->assertOk();
         $response->assertViewIs('users.history.index');
-        $response->assertViewHas('transaction', function ($transactions) {
+        $response->assertViewHas('transactions', function ($transactions) {
             return $transactions->isEmpty();
         });
+    }
+
+    public function test_user_can_view_history_page_with_defaults()
+    {
+        Transaction::factory()->count(2)->create(['user_id' => $this->user->id]);
+
+        $response = $this->actingAs($this->user, 'user')
+            ->get(route('user.view.history'));
+
+        $response->assertOk();
+        $response->assertViewIs('users.history.index');
+        $response->assertViewHas('statuses', TransactionStatus::cases());
+        $response->assertViewHas('transactions', function ($transactions) {
+            return $transactions instanceof LengthAwarePaginator &&
+                $transactions->total() === 2;
+        });
+        $response->assertViewHasAll(['search' => '', 'status' => '', 'start_date' => '', 'end_date' => '']);
+    }
+
+    public function test_user_only_sees_their_own_transactions()
+    {
+        Transaction::factory()->create(['user_id' => $this->user->id]);
+
+        $otherUser = User::factory()->create();
+        Transaction::factory()->create(['user_id' => $otherUser->id]);
+
+        $response = $this->actingAs($this->user, 'user')
+            ->get(route('user.view.history'));
+
+        $response->assertOk();
+        $response->assertViewHas('transactions', function ($transactions) {
+            return $transactions->total() === 1;
+        });
+    }
+
+    public function test_user_can_filter_their_own_history_by_status()
+    {
+        Transaction::factory()->create([
+            'user_id' => $this->user->id,
+            'status' => TransactionStatus::CONFIRMED->value
+        ]);
+        Transaction::factory()->create([
+            'user_id' => $this->user->id,
+            'status' => TransactionStatus::DELIVERED->value
+        ]);
+
+        $response = $this->actingAs($this->user, 'user')
+            ->get(route('user.view.history', [
+                'status' => TransactionStatus::DELIVERED->value
+            ]));
+
+        $response->assertOk();
+        $response->assertViewHas('transactions', function ($transactions) {
+            return $transactions->total() === 1;
+        });
+        $response->assertViewHas('status', TransactionStatus::DELIVERED->value);
+    }
+
+    public function test_user_gets_validation_error_for_invalid_status_enum()
+    {
+        $response = $this->actingAs($this->user, 'user')
+            ->from(route('user.view.history'))
+            ->get(route('user.view.history', ['status' => 'STATUS_PALSU']));
+
+        $response->assertRedirect(route('user.view.history'));
+        $response->assertSessionHasErrors('status');
+    }
+
+    public function test_user_gets_validation_error_for_invalid_date_format()
+    {
+        $response = $this->actingAs($this->user, 'user')
+            ->from(route('user.view.history'))
+            ->get(route('user.view.history', ['start_date' => 'djdj']));
+
+        $response->assertRedirect(route('user.view.history'));
+        $response->assertSessionHasErrors('start_date');
     }
 
     public function test_user_sees_their_own_paginated_and_ordered_transactions()
@@ -99,7 +176,7 @@ class HistoryTest extends TestCase
         $response->assertViewIs('users.history.index');
         $response->assertDontSeeText('INV-999');
 
-        $paginator = $response->viewData('transaction');
+        $paginator = $response->viewData('transactions');
         $this->assertInstanceOf(LengthAwarePaginator::class, $paginator);
         $this->assertCount(3, $paginator->items());
         $this->assertEquals(4, $paginator->total());

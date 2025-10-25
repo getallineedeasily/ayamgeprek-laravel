@@ -7,6 +7,7 @@ use App\Models\Food;
 use App\Models\Transaction;
 use App\Models\User;
 use DB;
+use Illuminate\Database\Query\Builder;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Auth;
@@ -102,13 +103,33 @@ class UserController extends Controller
 
     public function history(Request $request)
     {
-        $transaction = Transaction::whereBelongsTo($request->user('user'))
-            ->selectRaw('invoice_id, sum(total) as total, max(created_at) as created_at, status')
-            ->groupBy(['invoice_id', 'user_id', 'address', 'status'])
-            ->orderByDesc('created_at')
-            ->paginate(perPage: 3);
+        $payload = $request->validate([
+            'search' => ['nullable', 'ascii'],
+            'status' => ['nullable', Rule::enum(TransactionStatus::class)],
+            'start_date' => ['nullable', 'date'],
+            'end_date' => ['nullable', 'date'],
+        ]);
 
-        return view('users.history.index', compact('transaction'));
+        $search = $payload['search'] ?? '';
+        $status = $payload['status'] ?? '';
+        $start_date = $payload['start_date'] ?? '';
+        $end_date = $payload['end_date'] ?? '';
+
+        $statuses = TransactionStatus::cases();
+
+        $transactions = Transaction::userFilteredTransactions($search, $status, $start_date, $end_date)
+            ->whereBelongsTo($request->user('user'))
+            ->paginate(perPage: 3)
+            ->appends(['search' => $search, 'status' => $status, 'start_date' => $start_date, 'end_date' => $end_date]);
+
+        return view('users.history.index', [
+            'transactions' => $transactions,
+            'search' => $search,
+            'status' => $status,
+            'start_date' => $start_date,
+            'end_date' => $end_date,
+            'statuses' => $statuses,
+        ]);
     }
 
     public function historyDetail(Request $request, Transaction $transaction)

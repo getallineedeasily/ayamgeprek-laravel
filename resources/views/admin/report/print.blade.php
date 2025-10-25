@@ -78,10 +78,10 @@
                 </div>
                 <div class="text-right">
                     <p class="font-semibold text-gray-700">Periode:</p>
-                    <p class="text-gray-500">{{ $start_date }} - {{ $end_date }}</p>
+                    <p class="text-gray-500">{{ formatDate($start_date, false) }} - {{ formatDate($end_date, false) }}</p>
                 </div>
             </div>
-            <p class="text-xs text-gray-400 mt-4">Dicetak pada: {{ $now }}</p>
+            <p class="text-xs text-gray-400 mt-4">Dicetak pada: {{ formatDate($now, false) }}</p>
         </header>
 
         <section class="mb-8">
@@ -122,7 +122,7 @@
                     <tbody class="divide-y divide-gray-100">
                         @foreach ($transactions as $t)
                             <tr>
-                                <td class="p-3 text-sm">{{ $t->created_at }}</td>
+                                <td class="p-3 text-sm">{{ formatDate($t->created_at) }}</td>
                                 <td class="p-3 text-sm font-medium">#{{ $t->invoice_id }}</td>
                                 <td class="p-3 text-sm">{{ $t->user->name }}</td>
                                 <td class="p-3 text-sm">Rp {{ formatPrice($t->total) }}</td>

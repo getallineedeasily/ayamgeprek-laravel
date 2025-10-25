@@ -57,6 +57,33 @@ class Transaction extends Model
     }
 
     #[Scope]
+    protected function userFilteredTransactions(Builder $query, string $search = null, string $status = null, string $start_date = null, string $end_date = null): void
+    {
+        $query
+            ->selectRaw('invoice_id, sum(total) as total, max(created_at) as created_at, status')
+            ->groupBy(['invoice_id', 'user_id', 'address', 'status'])
+            ->when($start_date && $end_date, function ($query) use ($start_date, $end_date) {
+                $query->whereBetween('created_at', [
+                    Carbon::parse($start_date)->startOfDay(),
+                    Carbon::parse($end_date)->endOfDay()
+                ]);
+            })
+            ->when($search, function ($query) use ($search) {
+                $query->where('invoice_id', 'like', '%' . $search . '%');
+            })
+            ->when($status, function ($query, $status) {
+                $query->where('status', $status);
+            })
+            ->when($start_date, function ($query, $start_date) {
+                $query->whereDate('created_at', '>=', $start_date);
+            })
+            ->when($end_date, function ($query, $end_date) {
+                $query->whereDate('created_at', '<=', $end_date);
+            })
+            ->orderByDesc('created_at');
+    }
+
+    #[Scope]
     protected function totalRevenue(Builder $query, ?string $period = 'today', ?string $start_date = '', ?string $end_date = '')
     {
         match ($period) {

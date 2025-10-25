@@ -63,14 +63,14 @@
                 <div class="mt-8 space-y-2">
                     @if ($start_date && $end_date)
                         <p class="text-gray-500 text-base">Menampilkan transaksi dari <span
-                                class="font-bold">"{{ $start_date }}"</span> sampai <span
-                                class="font-bold">"{{ $end_date }}"</span> </p>
+                                class="font-bold">"{{ formatDate($start_date, false) }}"</span> sampai <span
+                                class="font-bold">"{{ formatDate($end_date, false) }}"</span> </p>
                     @elseif ($start_date)
                         <p class="text-gray-500 text-base">Menampilkan transaksi dari <span
-                                class="font-bold">"{{ $start_date }}"</span></p>
+                                class="font-bold">"{{ formatDate($start_date, false) }}"</span></p>
                     @elseif ($end_date)
                         <p class="text-gray-500 text-base">Menampilkan transaksi sampai <span
-                                class="font-bold">"{{ $end_date }}"</span></p>
+                                class="font-bold">"{{ formatDate($end_date, false) }}"</span></p>
                     @elseif ($search)
                         <p class="text-gray-500 text-base">Menampilkan hasil pencarian <span
                                 class="font-bold">"{{ $search }}"</span></p>
@@ -101,7 +101,7 @@
                                 <tr>
                                     <td class="py-4 px-6 font-medium">#{{ $t->invoice_id }}</td>
                                     <td class="py-4 px-6">{{ $t->user->name }}</td>
-                                    <td class="py-4 px-6">{{ $t->created_at }}</td>
+                                    <td class="py-4 px-6">{{ formatDate($t->created_at) }}</td>
                                     <td class="py-4 px-6">Rp {{ formatPrice($t->total) }}</td>
                                     <td class="py-4 px-6">
                                         @include('transaction-status', ['status' => $t->status])

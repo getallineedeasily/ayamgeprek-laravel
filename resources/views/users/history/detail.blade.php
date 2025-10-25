@@ -72,7 +72,7 @@
                 <div class="lg:col-span-1">
                     <h2 class="text-xl font-bold text-gray-800 mb-4">Ringkasan Pesanan</h2>
                     <div class="space-y-3 text-gray-700">
-                        <p><strong>Tanggal:</strong> {{ $transactions[0]->created_at }}</p>
+                        <p><strong>Tanggal:</strong> {{ formatDate($transactions[0]->created_at) }}</p>
                         <div><strong>Status:</strong>
                             @include('transaction-status', [
                                 'status' => $transactions[0]['status'],
@@ -116,10 +116,14 @@
             <div class="mt-8 border-t border-gray-300 pt-6">
                 @switch($transactions[0]->status)
                     @case(TransactionStatus::PENDING_PAYMENT->value)
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-10">
+                        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 md:gap-10">
                             <div>
                                 <h3 class="text-lg font-bold text-gray-800">Konfirmasi Pembayaran</h3>
-                                <p class="text-sm text-gray-600 mt-1 mb-4">Unggah bukti transfer Anda.</p>
+                                <p class="text-sm text-gray-600 mt-1.5 mb-4">Silahkan lakukan pembayaran melalui QRIS berikut.</p>
+                                <div class="w-full h-auto mb-8 flex justify-center rounded-xl">
+                                    <img alt="" class="w-full h-full object-contain rounded-xl"
+                                        src="/storage/images/hero.jpg" />
+                                </div>
                                 <form
                                     action="{{ route('user.upload.payment.proof', ['transaction' => $transactions[0]->invoice_id]) }}"
                                     method="POST" enctype="multipart/form-data">
@@ -152,11 +156,11 @@
                                     @enderror
                                     <button type="submit"
                                         class="w-full mt-6 bg-brand-green text-white font-bold py-2.5 px-4 rounded-[10px] hover:bg-green-700 transition-all duration-300 cursor-pointer block">
-                                        Konfirmasi Pembayaran
+                                        Unggah bukti transfer
                                     </button>
                                     <button type="button" disabled
                                         class="w-full mt-6 font-bold py-2.5 px-4 rounded-[10px] transition-all duration-300 cursor-not-allowed hidden loading bg-gray-300 text-black">
-                                        Konfirmasi Pembayaran
+                                        Unggah bukti transfer
                                     </button>
                                 </form>
 
