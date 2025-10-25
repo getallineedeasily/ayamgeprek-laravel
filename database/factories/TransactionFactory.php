@@ -28,7 +28,7 @@ class TransactionFactory extends Factory
             'quantity' => 4,
             'total' => 100000,
             'payment_proof' => 'dummy-txn.jpg',
-            'status' => TransactionStatus::PENDING_PAYMENT
+            'status' => TransactionStatus::PENDING_PAYMENT->value
         ];
     }
 }

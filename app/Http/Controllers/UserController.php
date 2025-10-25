@@ -60,7 +60,7 @@ class UserController extends Controller
         $transactions = Transaction::whereBelongsTo($request->user('user'))
             ->selectRaw('invoice_id')
             ->whereNotIn('status', [TransactionStatus::CANCELLED->value, TransactionStatus::DELIVERED->value])
-            ->groupBy('invoice_id')
+            ->groupBy('invoice_id', 'status')
             ->get();
 
         return view('users.dashboard.index', [
@@ -138,14 +138,14 @@ class UserController extends Controller
         $fileName = $request->user('user')->id . '_' . Carbon::now()->timestamp . '.' . $file->extension();
 
         try {
-            DB::transaction(function () use ($transactions, $file, $fileName) {
-                Storage::disk('local')->putFileAs('/payment_proof', $file, $fileName);
+            DB::transaction(function () use ($transactions, $fileName) {
                 foreach ($transactions as $t) {
                     $t->payment_proof = $fileName;
                     $t->status = TransactionStatus::WAITING_CONFIRMATION->value;
                     $t->save();
                 };
             });
+            Storage::disk('local')->putFileAs('/payment_proof', $file, $fileName);
             return redirect()->route('user.view.history.detail', ['transaction' => $transaction->invoice_id])->with('success', 'Berhasil unggah bukti pembayaran!');
         } catch (Throwable $th) {
             return back()->with('error', "Ada yang salah! Silahkan coba lagi!");

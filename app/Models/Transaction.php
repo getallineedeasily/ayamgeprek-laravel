@@ -88,7 +88,7 @@ class Transaction extends Model
             ]),
             default => $query->whereDate('created_at', Carbon::today()),
         };
-        
+
         return $query->where('status', '=', TransactionStatus::DELIVERED->value)
             ->distinct()
             ->count('invoice_id');
