@@ -26,7 +26,8 @@
                 </a>
                 <h1 class="text-3xl font-bold text-gray-800">Detail Transaksi</h1>
             </div>
-            <p class="text-gray-600 mt-2">ID Pesanan: #{{ $transactions[0]->invoice_id }}</p>
+            <p class="text-gray-600 mt-2">ID Pesanan: <span
+                    class="font-semibold text-gray-600">#{{ $transactions[0]->invoice_id }}</span></p>
         </div>
 
         <div class="bg-gray-50 p-6 md:p-8 rounded-[15px] mt-8">
@@ -95,7 +96,7 @@
                                         <p class="text-sm text-gray-500">{{ $transaction->quantity }} x</p>
                                     </div>
                                 </div>
-                                <p class="font-semibold text-gray-700">Rp {{ $transaction->price }} </p>
+                                <p class="font-semibold text-gray-700">Rp {{ formatPrice($transaction->price) }} </p>
                             </div>
                         @endforeach
 
@@ -105,7 +106,7 @@
                         <div class="flex justify-between font-bold text-lg">
                             <p class="text-2xl font-bold text-brand-green pt-2">Total</p>
                             <p class="text-2xl font-bold text-brand-green pt-2">Rp
-                                {{ collect($transactions)->reduce(function ($prev, $curr) {return $prev + $curr->total;}, 0) }}
+                                {{ formatPrice(collect($transactions)->reduce(function ($prev, $curr) {return $prev + $curr->total;}, 0)) }}
                             </p>
                         </div>
                     </div>

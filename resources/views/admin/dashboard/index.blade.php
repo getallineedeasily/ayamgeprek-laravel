@@ -14,7 +14,7 @@
                         <select id="filter" name="filter"
                             class="w-full px-4 py-2 border border-gray-300 rounded-[10px] focus:outline-none focus:ring-2 focus:ring-brand-orange bg-white">
                             <option value="today" {{ $filter === 'today' ? 'selected' : '' }}>Hari ini</option>
-                            <option value="month" {{ $filter === 'month' ? 'selected' : '' }} >Bulan ini</option>
+                            <option value="month" {{ $filter === 'month' ? 'selected' : '' }}>Bulan ini</option>
                         </select>
                     </div>
                     <button type="submit"
@@ -38,7 +38,7 @@
                     </span>
                 </div>
                 <div class="space-y-2">
-                    <p class="text-2xl font-bold text-gray-800">Rp {{ $totalRevenue }}</p>
+                    <p class="text-2xl font-bold text-gray-800">Rp {{ formatPrice($totalRevenue) }}</p>
                     <p class="text-gray-500">Total Pendapatan</p>
                 </div>
             </div>
@@ -106,7 +106,7 @@
                                     <td class="py-4 px-6 font-medium">#{{ $t->invoice_id }}</td>
                                     <td class="py-4 px-6">{{ $t->user->name }}</td>
                                     <td class="py-4 px-6">{{ $t->created_at }}</td>
-                                    <td class="py-4 px-6">Rp {{ $t->total }}</td>
+                                    <td class="py-4 px-6">Rp {{ formatPrice($t->total) }}</td>
                                     <td class="py-4 px-6">
                                         @include('transaction-status', ['status' => $t->status])
                                     </td>

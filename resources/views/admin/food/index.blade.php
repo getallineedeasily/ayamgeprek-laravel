@@ -24,7 +24,7 @@
                 <span class="material-symbols-outlined mr-2">
                     add
                 </span>
-                Tambah Produk Baru
+                Tambah Menu
             </a>
         </div>
 
@@ -82,7 +82,7 @@
                                             <span class="font-medium">{{ $food->name }}</span>
                                         </div>
                                     </td>
-                                    <td class="py-4 px-6">Rp {{ $food->price }}</td>
+                                    <td class="py-4 px-6">Rp {{ formatPrice($food->price) }}</td>
 
                                     <td class="py-4 px-6 text-center">
                                         <form action="{{ route('admin.destroy.food', ['food' => $food->id]) }}"

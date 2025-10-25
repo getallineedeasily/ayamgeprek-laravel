@@ -102,7 +102,7 @@
                                     <td class="py-4 px-6 font-medium">#{{ $t->invoice_id }}</td>
                                     <td class="py-4 px-6">{{ $t->user->name }}</td>
                                     <td class="py-4 px-6">{{ $t->created_at }}</td>
-                                    <td class="py-4 px-6">Rp {{ $t->total }}</td>
+                                    <td class="py-4 px-6">Rp {{ formatPrice($t->total) }}</td>
                                     <td class="py-4 px-6">
                                         @include('transaction-status', ['status' => $t->status])
                                     </td>

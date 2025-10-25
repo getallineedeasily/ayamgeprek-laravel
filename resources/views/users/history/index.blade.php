@@ -19,7 +19,7 @@
 
         <div class="bg-gray-50 p-6 rounded-[15px]">
             <h1 class="text-3xl font-bold text-gray-800">Riwayat Transaksi</h1>
-            <p class="text-gray-600 mt-2">Lihat semua pesanan yang telah Anda selesaikan</p>
+            <p class="text-gray-600 mt-2">Lihat semua pesanan yang dibuat</p>
         </div>
 
         <div class="bg-gray-50 p-6 md:p-8 rounded-[15px] mt-8">
@@ -29,14 +29,16 @@
                         <div class="bg-white border border-gray-200 rounded-[15px] p-4 transition">
                             <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center">
                                 <div class="flex-1 mb-4 sm:mb-0">
-                                    <div class="flex items-center gap-4 mb-2">
+                                    <div class="flex flex-col-reverse lg:flex-row lg:items-center gap-4 mb-2.5">
                                         <p class="font-semibold text-gray-800">ID Pesanan: #{{ $t['invoice_id'] }}</p>
-                                        @include('transaction-status', [
-                                            'status' => $t['status'],
-                                        ])
+                                        <div class="">
+                                            @include('transaction-status', [
+                                                'status' => $t['status'],
+                                            ])
+                                        </div>
                                     </div>
                                     <p class="text-sm text-gray-500">{{ $t['created_at'] }}</p>
-                                    <p class="text-md font-bold text-gray-900 mt-2">Rp {{ $t['total'] }}</p>
+                                    <p class="text-md font-bold text-gray-900 mt-2">Rp {{ formatPrice($t['total']) }}</p>
                                 </div>
                                 <a href="{{ route('user.view.history.detail', ['transaction' => $t->invoice_id]) }}"
                                     class="w-full sm:w-auto text-center font-bold text-brand-green py-2 px-4 rounded-[10px] hover:bg-green-100 transition-all duration-300">

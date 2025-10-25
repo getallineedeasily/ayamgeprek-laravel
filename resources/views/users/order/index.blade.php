@@ -15,7 +15,7 @@
 
         <div class="bg-gray-50 p-6 rounded-[15px]">
             <h1 class="text-3xl font-bold text-gray-800">Pesan Makanan</h1>
-            <p class="text-gray-600 mt-2">Pilih dan pesan menu favorit Anda di bawah ini</p>
+            <p class="text-gray-600 mt-2">Pilih dan pesan menu favorit Anda</p>
         </div>
         <form method="POST" action="{{ route('user.create.txn') }}" class="bg-gray-50 p-8 rounded-[15px] mt-8">
             @csrf
@@ -27,7 +27,7 @@
                             alt="{{ $food['name'] }}">
                         <div class="p-4 flex flex-col flex-grow text-center gap-2.5">
                             <h3 class="text-xl font-bold text-gray-800">{{ $food['name'] }}</h3>
-                            <p class="mt-1 font-semibold text-brand-green">{{ 'IDR ' . $food['price'] }}</p>
+                            <p class="mt-1 font-semibold text-brand-green">{{ 'IDR ' . formatPrice($food['price']) }}</p>
                             <div class="mt-4 flex flex-col flex-grow justify-start">
 
                                 <input type="hidden" name="order[{{ $index }}][food_id]"

@@ -49,7 +49,7 @@
                                         <p class="text-sm text-gray-500">{{ $transaction->quantity }} x</p>
                                     </div>
                                 </div>
-                                <p class="font-semibold text-gray-700">Rp {{ $transaction->price }} </p>
+                                <p class="font-semibold text-gray-700">Rp {{ formatPrice($transaction->price) }} </p>
                             </div>
                         @endforeach
 
@@ -59,7 +59,7 @@
                         <div class="flex justify-between items-center font-bold text-lg text-gray-800 mt-4">
                             <p>Total Pembayaran</p>
                             <p>Rp
-                                {{ collect($transactions)->reduce(function ($prev, $curr) {return $prev + $curr['total'];}, 0) }}
+                                {{ formatPrice(collect($transactions)->reduce(function ($prev, $curr) {return $prev + $curr['total'];}, 0)) }}
                             </p>
                         </div>
                     </div>

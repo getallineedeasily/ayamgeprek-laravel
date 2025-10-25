@@ -89,7 +89,7 @@
             <div class="grid grid-cols-3 gap-6">
                 <div class="border border-gray-200 rounded-[10px] p-4">
                     <p class="text-sm text-gray-500">Total Pendapatan</p>
-                    <p class="text-2xl font-bold">Rp {{ $totalRevenue }}</p>
+                    <p class="text-2xl font-bold">Rp {{ formatPrice($totalRevenue) }}</p>
                 </div>
                 <div class="border border-gray-200 rounded-[10px] p-4">
                     <p class="text-sm text-gray-500">Total Transaksi</p>
@@ -125,7 +125,7 @@
                                 <td class="p-3 text-sm">{{ $t->created_at }}</td>
                                 <td class="p-3 text-sm font-medium">#{{ $t->invoice_id }}</td>
                                 <td class="p-3 text-sm">{{ $t->user->name }}</td>
-                                <td class="p-3 text-sm">Rp {{ $t->total }}</td>
+                                <td class="p-3 text-sm">Rp {{ formatPrice($t->total) }}</td>
                                 <td class="p-3 text-sm"><span class="text-xs font-semibold px-2 py-0.5 rounded-full">
                                         {{ $t->status }}</span>
                                 </td>

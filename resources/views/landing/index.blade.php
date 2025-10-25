@@ -55,7 +55,7 @@
                         </div>
                         <div class="menu-card-text p-4 text-center">
                             <h3 class="pb-2 max-md:text-sm text-lg font-bold">{{ $food['name'] }}</h3>
-                            <span class="max-md:text-[0.825rem]">{{ 'IDR ' . $food['price'] }}</span>
+                            <span class="max-md:text-[0.825rem]">{{ 'IDR ' . formatPrice($food['price']) }}</span>
                         </div>
                     </div>
                 @endforeach
