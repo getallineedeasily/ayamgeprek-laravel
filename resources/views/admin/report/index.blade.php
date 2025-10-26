@@ -18,7 +18,7 @@
             <p class="text-gray-600 mt-2">Lihat dan cetak laporan penjualan</p>
         </div>
 
-        <div class="mt-8 bg-gray-50 p-6 rounded-[15px]">
+        <div class="grid grid-cols-1 mt-8 bg-gray-50 p-6 rounded-[15px]">
             <form action="{{ route('admin.print.report') }}" method="GET" class="space-y-8">
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div class="space-y-2">

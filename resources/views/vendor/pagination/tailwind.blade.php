@@ -5,7 +5,7 @@
                 Menampilkan
                 @if ($paginator->firstItem())
                     <span class="font-bold">{{ $paginator->firstItem() }}</span>
-                    sampai
+                    -
                     <span class="font-bold">{{ $paginator->lastItem() }}</span>
                 @else
                     {{ $paginator->count() }}

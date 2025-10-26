@@ -121,8 +121,8 @@
                                 <h3 class="text-lg font-bold text-gray-800">Konfirmasi Pembayaran</h3>
                                 <p class="text-sm text-gray-600 mt-1.5 mb-4">Silahkan lakukan pembayaran melalui QRIS berikut.</p>
                                 <div class="w-full h-auto mb-8 flex justify-center rounded-xl">
-                                    <img alt="" class="w-full h-full object-contain rounded-xl"
-                                        src="/storage/images/hero.jpg" />
+                                    <img alt="" class="w-full sm:w-3/4 md:w-1/2 object-contain rounded-xl"
+                                        src="/storage/images/qris.jpg" />
                                 </div>
                                 <form
                                     action="{{ route('user.upload.payment.proof', ['transaction' => $transactions[0]->invoice_id]) }}"

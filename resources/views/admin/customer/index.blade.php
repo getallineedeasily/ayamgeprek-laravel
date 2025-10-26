@@ -47,7 +47,7 @@
                 </div>
             @endif
 
-            <div class="mt-6 bg-white rounded-[15px] overflow-hidden">
+            <div class="grid grid-cols-1 mt-6 bg-white rounded-[15px] overflow-hidden">
                 <div class="overflow-x-auto">
                     <table class="w-full text-left">
                         <thead class="bg-gray-200">

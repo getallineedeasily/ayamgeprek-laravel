@@ -19,7 +19,7 @@
         </div>
 
 
-        <div class="mt-8 bg-gray-50 p-6 rounded-[15px]">
+        <div class="grid grid-cols-1 mt-8 bg-gray-50 p-6 rounded-[15px]">
             <form action="{{ route('admin.view.txn') }}" method="GET" class="space-y-5">
                 <input type="text" placeholder="Cari ID pesanan atau nama"
                     class="px-4 py-2 border border-gray-300 rounded-[10px] focus:outline-none focus:ring-2 focus:ring-brand-orange bg-white w-full block"

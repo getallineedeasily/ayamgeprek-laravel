@@ -13,7 +13,7 @@
             </div>
         @endsession
 
-        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center bg-gray-50 p-6 rounded-[15px]">
+        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center bg-gray-50 p-6 rounded-[15px] gap-4">
             <div class="">
                 <h1 class="text-3xl font-bold text-gray-800">Kelola Menu</h1>
                 <p class="text-gray-600 mt-2">Tambah, ubah, dan hapus menu</p>
@@ -28,7 +28,7 @@
             </a>
         </div>
 
-        <div class="mt-8 bg-gray-50 p-6 rounded-[15px]">
+        <div class="grid grid-cols-1 mt-8 bg-gray-50 p-6 rounded-[15px]">
 
             <form action="{{ route('admin.view.food') }}" method="get">
                 <div class="flex flex-col md:flex-row gap-4">
