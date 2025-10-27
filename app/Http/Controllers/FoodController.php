@@ -53,13 +53,11 @@ class FoodController extends Controller
         $fileName = Str::replace(" ", '-', Str::lower($payload['name'])) . "." . $payload['image']->extension();
 
         try {
-            DB::transaction(function () use ($payload, $fileName) {
-                Food::create([
-                    'name' => $payload['name'],
-                    'price' => $payload['price'],
-                    'image' => $fileName
-                ]);
-            });
+            Food::create([
+                'name' => $payload['name'],
+                'price' => $payload['price'],
+                'image' => $fileName
+            ]);
 
             Storage::disk('public')->putFileAs('/images', $payload['image'], $fileName);
 
