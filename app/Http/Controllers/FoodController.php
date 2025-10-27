@@ -117,7 +117,6 @@ class FoodController extends Controller
             $food->save();
             return redirect()->route('admin.view.food')->with('success', 'Berhasil ubah menu!');
         } catch (\Throwable $th) {
-            dd($th);
             return back()->with('error', 'Ada yang salah! Silahkan coba lagi!');
         }
     }
