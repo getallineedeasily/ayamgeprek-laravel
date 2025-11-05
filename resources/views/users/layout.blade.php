@@ -67,6 +67,15 @@
                     </span>
                     Profil
                 </a>
+                <a href="https://wa.me/+62812345678"
+                    class="flex items-center py-2.5 px-4 rounded-[10px] transition duration-200 text-black hover:bg-gray-100"
+                    target="_blank">
+                    <span class="material-symbols-outlined pr-2">
+                        support_agent
+                    </span>
+                    Dukungan
+                </a>
+
             </nav>
 
             <div class="absolute bottom-0 w-full left-0 px-2 pb-4">
@@ -98,7 +107,7 @@
 
     </main>
     <footer class="md:ml-64 flex justify-center pb-6 px-6 md:px-10">
-         <span class="bg-gray-50 p-3 rounded-xl w-full text-center text-sm font-medium">&copy; 2025 by ricky</span>
+        <span class="bg-gray-50 p-3 rounded-xl w-full text-center text-sm font-medium">&copy; 2025 by ricky</span>
     </footer>
     <script>
         const btn = document.getElementById('mobile-menu-button');
