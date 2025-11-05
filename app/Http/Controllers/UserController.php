@@ -6,8 +6,8 @@ use App\Enums\TransactionStatus;
 use App\Models\Food;
 use App\Models\Transaction;
 use App\Models\User;
+use Cache;
 use DB;
-use Illuminate\Database\Query\Builder;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Auth;
@@ -54,7 +54,7 @@ class UserController extends Controller
     }
 
     /**
-     * Display a listing of the resource.
+     * View dashboard.
      */
     public function index(Request $request)
     {
@@ -95,12 +95,28 @@ class UserController extends Controller
         }
     }
 
+    /**
+     * View order menu
+     * @param \Illuminate\Http\Request $request
+     * @return \Illuminate\Contracts\View\View
+     */
     public function order(Request $request)
     {
-        $foods = Food::all();
+        $key = 'foods:all:menu';
+        $duration = 600;
+
+        $foods = Cache::remember($key, $duration, function () {
+            return Food::all();
+        });
+
         return view('users.order.index', compact('foods'));
     }
 
+    /**
+     * View transactions history menu
+     * @param \Illuminate\Http\Request $request
+     * @return \Illuminate\Contracts\View\View
+     */
     public function history(Request $request)
     {
         $payload = $request->validate([
@@ -122,16 +138,18 @@ class UserController extends Controller
             ->paginate(perPage: 3)
             ->appends(['search' => $search, 'status' => $status, 'start_date' => $start_date, 'end_date' => $end_date]);
 
-        return view('users.history.index', [
-            'transactions' => $transactions,
-            'search' => $search,
-            'status' => $status,
-            'start_date' => $start_date,
-            'end_date' => $end_date,
-            'statuses' => $statuses,
-        ]);
+        return view(
+            'users.history.index',
+            compact('transactions', 'search', 'status', 'start_date', 'end_date', 'statuses')
+        );
     }
 
+    /**
+     * View transaction detail
+     * @param \Illuminate\Http\Request $request
+     * @param \App\Models\Transaction $transaction
+     * @return \Illuminate\Contracts\View\View
+     */
     public function historyDetail(Request $request, Transaction $transaction)
     {
         Gate::authorize('view', $transaction);
@@ -142,6 +160,34 @@ class UserController extends Controller
         return view('users.history.detail', compact('transactions'));
     }
 
+    /**
+     * View payment proof
+     * @param \App\Models\Transaction $transaction
+     * @return \Symfony\Component\HttpFoundation\BinaryFileResponse
+     */
+    public function paymentProof(Transaction $transaction)
+    {
+        Gate::authorize('view', $transaction);
+
+        $file = '/payment_proof/' . $transaction->payment_proof;
+
+        try {
+            if (Storage::disk('local')->exists($file)) {
+                $path = Storage::disk('local')->path($file);
+                return response()->file($path);
+            }
+            abort(404);
+        } catch (Throwable $th) {
+            abort(404);
+        }
+    }
+
+    /**
+     * Upload payment proof
+     * @param \Illuminate\Http\Request $request
+     * @param \App\Models\Transaction $transaction
+     * @return \Illuminate\Http\RedirectResponse
+     */
     public function uploadPaymentProof(Request $request, Transaction $transaction)
     {
         Gate::authorize('update', $transaction);
@@ -173,23 +219,12 @@ class UserController extends Controller
         }
     }
 
-    public function paymentProof(Transaction $transaction)
-    {
-        Gate::authorize('view', $transaction);
-
-        $file = '/payment_proof/' . $transaction->payment_proof;
-
-        try {
-            if (Storage::disk('local')->exists($file)) {
-                $path = Storage::disk('local')->path($file);
-                return response()->file($path);
-            }
-            abort(404);
-        } catch (Throwable $th) {
-            abort(404);
-        }
-    }
-
+    /**
+     * Cancel order
+     * @param \Illuminate\Http\Request $request
+     * @param \App\Models\Transaction $transaction
+     * @return \Illuminate\Http\RedirectResponse
+     */
     public function cancelOrder(Request $request, Transaction $transaction)
     {
         Gate::authorize('update', $transaction);

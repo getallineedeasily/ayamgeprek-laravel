@@ -54,7 +54,7 @@ class DashboardTest extends TestCase
         $response->assertOk();
         $response->assertViewIs('admin.dashboard.index');
         $response->assertViewHas('name', 'Admin Utama');
-        $response->assertViewHas('filter', '');
+        $response->assertViewHas('filter', 'today');
         $response->assertViewHas('totalRevenue');
         $response->assertViewHas('totalSales');
         $response->assertViewHas('mostSoldFood');

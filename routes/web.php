@@ -9,7 +9,12 @@ use Illuminate\Support\Facades\Route;
 
 Route::middleware('guest:user,admin')->group(function () {
     Route::get('/', function () {
-        $foods = Food::all();
+        $key = 'foods:all:menu';
+        $duration = 600;
+
+        $foods = Cache::remember($key, $duration, function () {
+            return Food::all();
+        });
         return view('landing.index', compact('foods'));
     })->name('view.landing');
 

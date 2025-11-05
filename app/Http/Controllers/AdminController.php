@@ -47,7 +47,7 @@ class AdminController extends Controller
     }
 
     /**
-     * Display a listing of the resource.
+     * View dashboard
      */
     public function index(Request $request)
     {
@@ -96,6 +96,11 @@ class AdminController extends Controller
         ]);
     }
 
+    /**
+     * Summary of customer
+     * @param \Illuminate\Http\Request $request
+     * @return \Illuminate\Contracts\View\View
+     */
     public function customer(Request $request)
     {
         $payload = $request->validate([
@@ -118,6 +123,11 @@ class AdminController extends Controller
         return view('admin.customer.index', compact('users', 'search'));
     }
 
+    /**
+     * Reset customer password
+     * @param \App\Models\User $user
+     * @return \Illuminate\Http\RedirectResponse
+     */
     public function resetCustomerPassword(User $user)
     {
         try {
@@ -129,11 +139,20 @@ class AdminController extends Controller
         }
     }
 
+    /**
+     * View report menu
+     * @return \Illuminate\Contracts\View\View
+     */
     public function report()
     {
         return view('admin.report.index');
     }
 
+    /**
+     * Print report
+     * @param \Illuminate\Http\Request $request
+     * @return \Illuminate\Contracts\View\View
+     */
     public function print(Request $request)
     {
         $payload = $request->validate([
@@ -156,16 +175,9 @@ class AdminController extends Controller
 
         $now = Carbon::now()->toDateString();
 
-        return view('admin.report.print', [
-            'start_date' => $start_date,
-            'end_date' => $end_date,
-            'statuses' => $statuses,
-            'transactions' => $transactions,
-            'totalSales' => $totalSales,
-            'totalRevenue' => $totalRevenue,
-            'mostSoldFood' => $mostSoldFood,
-            'totalCustomer' => $totalCustomer,
-            'now' => $now
-        ]);
+        return view(
+            'admin.report.print',
+            compact('start_date', 'end_date', 'statuses', 'transactions', 'totalSales', 'totalRevenue', 'mostSoldFood', 'totalCustomer', 'now')
+        );
     }
 }
