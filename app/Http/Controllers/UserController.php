@@ -241,7 +241,9 @@ class UserController extends Controller
                     $t->save();
                 };
             });
-            return redirect()->route('user.view.history.detail', ['transaction' => $transaction->invoice_id])->with('success', 'Pesanan berhasil dibatalkan!');
+            return redirect()
+                ->route('user.view.history.detail', ['transaction' => $transaction->invoice_id])
+                ->with('success', 'Pesanan berhasil dibatalkan!');
         } catch (Throwable $th) {
             return back()->with('error', "Ada yang salah! Silahkan coba lagi!");
         }

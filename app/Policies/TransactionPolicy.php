@@ -25,11 +25,15 @@ class TransactionPolicy
      */
     public function update(User $user, Transaction $transaction)
     {
-        return $user->id === $transaction->user_id && $transaction->status === TransactionStatus::PENDING_PAYMENT->value
+        return $user->id === $transaction->user_id
+            && $transaction->status === TransactionStatus::PENDING_PAYMENT->value
             ? Response::allow()
             : Response::denyAsNotFound();
     }
 
+    /**
+     * Determine whether admin can update the transaction
+     */
     public function adminUpdate(Admin $admin, Transaction $transaction)
     {
         return $transaction->status !== TransactionStatus::PENDING_PAYMENT->value
