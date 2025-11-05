@@ -25,8 +25,8 @@ class User extends Authenticatable
     protected function filteredUser(Builder $query, string $search): void
     {
         $query->when($search, function (Builder $query) use ($search) {
-            $query->where('name', 'like', $search)
-                ->orWhere('email', 'like', $search);
+            $query->where('name', 'like', '%' . $search . '%')
+                ->orWhere('email', 'like', '%' . $search . '%');
         }, );
     }
 

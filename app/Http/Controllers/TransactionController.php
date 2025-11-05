@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Enums\TransactionStatus;
 use App\Models\Food;
 use App\Models\Transaction;
+use Cache;
 use DB;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
@@ -25,29 +26,31 @@ class TransactionController extends Controller
             'status' => ['nullable', Rule::enum(TransactionStatus::class)],
             'start_date' => ['nullable', 'date'],
             'end_date' => ['nullable', 'date'],
-        ]);
+            'page' => ['nullable', 'numeric', 'min:1', 'integer']
 
-        $query = $payload ? '%' . $payload['search'] . '%' : '';
+        ]);
 
         $search = $payload['search'] ?? '';
         $status = $payload['status'] ?? '';
         $start_date = $payload['start_date'] ?? '';
         $end_date = $payload['end_date'] ?? '';
+        $page = $payload['page'] ?? '1';
 
-        $transactions = Transaction::filteredTransactions($query, $status, $start_date, $end_date)
-            ->paginate(3)
-            ->appends(['search' => $search, 'status' => $status, 'start_date' => $start_date, 'end_date' => $end_date]);
+        $key = "transactions:search_{$search}:status_{$status}:start_{$start_date}:end_{$end_date}:page_{$page}";
+        $duration = 300;
+
+        $transactions = Cache::remember($key, $duration, function () use ($search, $status, $start_date, $end_date) {
+            return Transaction::filteredTransactions($search, $status, $start_date, $end_date)
+                ->paginate(3)
+                ->appends(['search' => $search, 'status' => $status, 'start_date' => $start_date, 'end_date' => $end_date]);
+        });
 
         $statuses = TransactionStatus::cases();
 
-        return view('admin.transaction.index', [
-            'transactions' => $transactions,
-            'search' => $search,
-            'status' => $status,
-            'start_date' => $start_date,
-            'end_date' => $end_date,
-            'statuses' => $statuses,
-        ]);
+        return view(
+            'admin.transaction.index',
+            compact('transactions', 'search', 'status', 'start_date', 'end_date', 'statuses')
+        );
     }
 
     /**
@@ -86,7 +89,7 @@ class TransactionController extends Controller
                     ]);
                 }
             });
-
+            Cache::flush();
             return redirect()->route('user.view.history.detail', ['transaction' => $invoice_id])->with('success', 'Berhasil pesan makanan! Silahkan lakukan pembayaran!');
         } catch (\Throwable $th) {
             return back()->with('error', 'Ada yang salah! Silahkan coba lagi!');
@@ -147,7 +150,7 @@ class TransactionController extends Controller
                     }
                 }
             });
-
+            Cache::flush();
             return redirect()->route('admin.edit.txn', ['transaction' => $transaction->invoice_id])->with('success', 'Berhasil ubah status transaksi!');
         } catch (\Throwable $th) {
             return back()->with('error', 'Ada yang salah! Silahkan coba lagi!');

@@ -3,8 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Models\Food;
-use DB;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\Rules\File;
 use Str;
@@ -18,17 +18,23 @@ class FoodController extends Controller
     {
         $payload = $request->validate([
             'search' => ['nullable', 'ascii'],
+            'page' => ['nullable', 'numeric', 'min:1', 'integer']
         ]);
-
-        $query = $payload ? '%' . $payload['search'] . '%' : '';
 
         $search = $payload['search'] ?? '';
 
-        $foods = Food::filteredFood($query)
-            ->paginate(perPage: 3)
-            ->appends(['search' => $search]);
+        $page = $payload['page'] ?? '1';
 
-        return view('admin.food.index', ['foods' => $foods, 'search' => $search]);
+        $key = "food:search_{$search}:page_{$page}";
+        $duration = 300;
+
+        $foods = Cache::remember($key, $duration, function () use ($search) {
+            return Food::filteredFood($search)
+                ->paginate(perPage: 3)
+                ->appends(['search' => $search]);
+        });
+
+        return view('admin.food.index', compact('foods', 'search'));
     }
 
     /**
@@ -60,7 +66,7 @@ class FoodController extends Controller
             ]);
 
             Storage::disk('public')->putFileAs('/images', $payload['image'], $fileName);
-
+            Cache::flush();
             return redirect()->route('admin.view.food')->with('success', 'Berhasil menambahkan menu!');
         } catch (\Throwable $th) {
             return back()->with('error', 'Ada yang salah! Silahkan coba lagi!');
@@ -113,6 +119,7 @@ class FoodController extends Controller
             $food->name = $payload['name'];
             $food->price = $payload['price'];
             $food->save();
+            Cache::flush();
             return redirect()->route('admin.view.food')->with('success', 'Berhasil ubah menu!');
         } catch (\Throwable $th) {
             return back()->with('error', 'Ada yang salah! Silahkan coba lagi!');
@@ -130,6 +137,7 @@ class FoodController extends Controller
                 Storage::disk('public')->delete($path);
             }
             $food->delete();
+            Cache::flush();
             return redirect()->route('admin.view.food')->with('success', 'Berhasil hapus menu!');
         } catch (\Throwable $th) {
             return back()->with('error', 'Ada yang salah! Silahkan coba lagi!');

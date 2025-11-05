@@ -18,7 +18,7 @@ class Food extends Model
     protected function filteredFood(Builder $query, string $search): void
     {
         $query->when($search, function (Builder $query) use ($search) {
-            $query->where('name', 'like', $search);
+            $query->where('name', 'like', '%' . $search . '%');
         }, function (Builder $query) {
             $query->orderByDesc('created_at');
         });

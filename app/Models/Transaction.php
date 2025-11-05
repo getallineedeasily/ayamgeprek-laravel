@@ -39,8 +39,8 @@ class Transaction extends Model
             })
             ->when($search, function ($query, $search) {
                 $query->whereHas('user', function ($q) use ($search) {
-                    $q->where('name', 'like', $search)
-                        ->orWhere('invoice_id', 'like', $search);
+                    $q->where('name', 'like', "%{$search}%")
+                        ->orWhere('invoice_id', 'like', "%{$search}%");
                 });
             })
             ->when($status, function ($query, $status) {

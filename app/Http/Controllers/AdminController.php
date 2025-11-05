@@ -6,6 +6,7 @@ use App\Enums\TransactionStatus;
 use App\Models\Transaction;
 use App\Models\User;
 use Auth;
+use Cache;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 
@@ -54,55 +55,67 @@ class AdminController extends Controller
             'filter' => ['nullable', 'in:today,month'],
         ]);
 
-        $filter = $payload['filter'] ?? '';
+        $filter = $payload['filter'] ?? 'today';
+        $duration = 300;
 
-        switch ($filter) {
-            case 'month':
-                $transactions = Transaction::filteredTransactions()
-                    ->paginate(perPage: 3);
-                $totalRevenue = Transaction::totalRevenue('month');
-                $totalSales = Transaction::totalSales('month');
-                $mostSoldFood = Transaction::mostSoldFood('month');
-                $totalCustomer = User::totalCustomer('month');
-                break;
+        $statsKey = "dashboard:stats:{$filter}";
+        $stats = Cache::remember($statsKey, $duration, function () use ($filter) {
+            switch ($filter) {
+                case 'month':
+                    $totalRevenue = Transaction::totalRevenue('month');
+                    $totalSales = Transaction::totalSales('month');
+                    $mostSoldFood = Transaction::mostSoldFood('month');
+                    $totalCustomer = User::totalCustomer('month');
+                    break;
 
-            default:
-                $transactions = Transaction::filteredTransactions()
-                    ->paginate(perPage: 3);
-                $totalRevenue = Transaction::totalRevenue('today');
-                $totalSales = Transaction::totalSales('today');
-                $mostSoldFood = Transaction::mostSoldFood('today');
-                $totalCustomer = User::totalCustomer('today');
-                break;
-        }
+                default:
+                    $totalRevenue = Transaction::totalRevenue('today');
+                    $totalSales = Transaction::totalSales('today');
+                    $mostSoldFood = Transaction::mostSoldFood('today');
+                    $totalCustomer = User::totalCustomer('today');
+                    break;
+            }
+
+            return compact('totalRevenue', 'totalSales', 'mostSoldFood', 'totalCustomer');
+        });
+
+        $transKey = "dashboard:transactions:{$filter}";
+        $transactions = Cache::remember($transKey, $duration, function () {
+            return Transaction::filteredTransactions()
+                ->paginate(perPage: 3);
+        });
 
         return view('admin.dashboard.index', [
             'name' => $request->user('admin')->name,
             'transactions' => $transactions,
-            'totalSales' => $totalSales,
-            'totalRevenue' => $totalRevenue,
-            'mostSoldFood' => $mostSoldFood,
-            'totalCustomer' => $totalCustomer,
+            'totalSales' => $stats['totalSales'],
+            'totalRevenue' => $stats['totalRevenue'],
+            'mostSoldFood' => $stats['mostSoldFood'],
+            'totalCustomer' => $stats['totalCustomer'],
             'filter' => $filter
         ]);
     }
 
     public function customer(Request $request)
     {
-
         $payload = $request->validate([
             'search' => ['nullable', 'ascii'],
+            'page' => ['nullable', 'numeric', 'min:1', 'integer']
         ]);
 
-        $query = $payload ? '%' . $payload['search'] . '%' : '';
-
         $search = $payload['search'] ?? '';
+        $page = $payload['page'] ?? '1';
+        $duration = 300;
 
-        $users = User::filteredUser($query)
-            ->paginate(perPage: 3)
-            ->appends(['search' => $search]);
+        $key = "customers:search:{$search}:page:{$page}";
 
-        return view('admin.customer.index', ['users' => $users, 'search' => $search]);
+        $users = Cache::remember($key, $duration, function () use ($search) {
+            return User::filteredUser($search)
+                ->paginate(perPage: 3)
+                ->appends(['search' => $search]);
+        });
+
+        return view('admin.customer.index', compact('users', 'search'));
     }
 
     public function resetCustomerPassword(User $user)
@@ -110,10 +123,15 @@ class AdminController extends Controller
         try {
             $user->password = $user->email;
             $user->save();
-            return redirect()->route('admin.view.customer')->with('success', 'Berhasil atur ulang kata sandi pelanggan ' . $user->name . '!');
+            return redirect()->route('admin.view.customer')->with('success', "Berhasil atur ulang kata sandi pelanggan {$user->name}!");
         } catch (\Throwable $th) {
             return back()->with('error', 'Ada yang salah! Silahkan coba lagi!');
         }
+    }
+
+    public function report()
+    {
+        return view('admin.report.index');
     }
 
     public function print(Request $request)
@@ -149,10 +167,5 @@ class AdminController extends Controller
             'totalCustomer' => $totalCustomer,
             'now' => $now
         ]);
-    }
-
-    public function report()
-    {
-        return view('admin.report.index');
     }
 }
